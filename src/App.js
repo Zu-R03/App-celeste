@@ -1,25 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import Index from "./views";
+import Register from "./views/register";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')  // Usa '/sw.js'
+            .then(reg => {
+              console.log('Service Worker registrado con éxito:', reg);
+            })
+            .catch(error => {
+              console.log('Error al registrar el Service Worker:', error);
+            });
+        });
+    }
+
+    return (
+        <Router>
+            <Routes>
+                <Route path="/" element={<Navigate to="/home" />} />
+                <Route path="/home" element={<Index />} />
+                <Route path="/sign-up" element={<Register />} />
+            </Routes>
+        </Router>
+    );
 }
 
 export default App;
