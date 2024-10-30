@@ -3,48 +3,59 @@
   "name": "Symphony Music",
   "icons": [
     {
-      "src": "/logos/logo16.ico",
+      "src": "/logos/logo16.png",
       "sizes": "16x16",
-      "type": "image/x-icon"
+      "type": "image/png"
     },
     {
-      "src": "/logos/logo24.ico",
+      "src": "/logos/logo24.png",
       "sizes": "24x24",
-      "type": "image/x-icon"
+      "type": "image/png"
     },
     {
-      "src": "/logos/logo32.ico",
+      "src": "/logos/logo32.png",
       "sizes": "32x32",
-      "type": "image/x-icon"
+      "type": "image/png"
     },
     {
-      "src": "/logos/logo48.ico",
+      "src": "/logos/logo48.png",
       "sizes": "48x48",
-      "type": "image/x-icon"
+      "type": "image/png"
     },
     {
-      "src": "/logos/logo64.ico",
+      "src": "/logos/logo64.png",
       "sizes": "64x64",
-      "type": "image/x-icon"
+      "type": "image/png"
     },
     {
-      "src": "/logos/logo96.ico",
+      "src": "/logos/logo96.png",
       "sizes": "96x96",
-      "type": "image/x-icon"
+      "type": "image/png"
     },
     {
-      "src": "/logos/logo128.ico",
+      "src": "/logos/logo128.png",
       "sizes": "128x128",
-      "type": "image/x-icon"
+      "type": "image/png"
     },
     {
-      "src": "/logos/logo256.ico",
+      "src": "/logos/logo256.png",
       "sizes": "256x256",
-      "type": "image/x-icon"
+      "type": "image/png"
+    },
+    {
+      "src": "/logos/logo512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/logos/logo1024.png",
+      "sizes": "1024x1024",
+      "type": "image/png"
     }
   ],
   "start_url": ".",
   "display": "standalone",
+  "orientation":"any",
   "theme_color": "#000000",
   "background_color": "#FFFFFF"
 }
