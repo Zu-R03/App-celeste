@@ -112,7 +112,7 @@ export default function Index() {
                         </p>
                     </div>
                     <img src="https://static1.pocketlintimages.com/wordpress/wp-content/uploads/2023/04/apple-music.jpg"
-                         className="h-64 w-80 sm:h-[300px] sm:w-[400px] lg:h-[400px] lg:w-[600px] rounded-3xl mt-5 lg:mt-0"/>
+                         className="h-64 w-80 sm:h-[300px] sm:w-[400px] lg:h-[400px] lg:w-[600px] rounded-3xl mt-5 lg:mt-0" alt={""}/>
                 </div>
             </section>
 
@@ -120,7 +120,7 @@ export default function Index() {
                 <div
                     className="flex flex-col lg:flex-row items-center lg:h-1/2 justify-around mt-16 lg:mt-32 mb-16 lg:mb-32">
                     <img src="https://ijunkie.com/wp-content/uploads/2023/03/Apple-Music-iOS-16.4-1280x960.jpeg"
-                         className="h-64 w-80 sm:h-[300px] sm:w-[400px] lg:h-[470px] lg:w-[600px] rounded-3xl mb-5 lg:mb-0"/>
+                         className="h-64 w-80 sm:h-[300px] sm:w-[400px] lg:h-[470px] lg:w-[600px] rounded-3xl mb-5 lg:mb-0" alt={""}/>
                     <div className="text-center lg:text-left w-full lg:w-1/2 items-center">
                         <h1 className="text-4xl lg:text-6xl font-bold text-center lg:text-left">Nosotros</h1>
                         <p className="mt-6 lg:mt-10 text-lg lg:text-2xl text-justify">
