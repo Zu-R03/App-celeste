@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-restricted-globals
 self.addEventListener('install', event => {
     caches.open('appShell3').then(cache => {
         cache.addAll([
@@ -7,13 +8,17 @@ self.addEventListener('install', event => {
         ]);
     });
     
+
+    // eslint-disable-next-line no-restricted-globals
     self.skipWaiting();
 });
 
+// eslint-disable-next-line no-restricted-globals
 self.addEventListener('activate', event => {
     caches.delete('appShell2');
 });
 
+// eslint-disable-next-line no-restricted-globals
 self.addEventListener('fetch', event => {
     // Solo gestionar solicitudes que sean de HTTP o HTTPS
     if (event.request.url.startsWith('http')) {
