@@ -1,12 +1,13 @@
 import React from "react";
 import {useNavigate} from "react-router-dom";
+import { insertar } from "..";
 export default function Register() {
 
     const navigate = useNavigate();
 
-    const handleRedirect = () => {
+    /*const handleRedirect = () => {
         navigate('/home');
-    };
+    };*/
 
     return (
         <>
@@ -18,7 +19,7 @@ export default function Register() {
                         </h2>
                     </div>
                     <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                        <form className="space-y-6" action="#">
+                        <form className="space-y-6" onSubmit={insertar}>
                             <div>
                                 <label htmlFor="name" className="block font-medium leading-6 text-gray-900">
                                     Nombre(s)
@@ -82,7 +83,7 @@ export default function Register() {
 
                             <div>
                                 <button
-                                    onClick={handleRedirect}
+                                    //onClick={handleRedirect}
                                     type="submit"
                                     className="flex w-full mt-10 justify-center rounded-md bg-secondary border-2 border-secondary px-3 py-2 text-md font-semibold leading-6 text-white shadow-sm hover:bg-white hover:text-dark_complementary hover:border-2 hover:border-secondary transition duration-500 ease-in-out"
                                 >
