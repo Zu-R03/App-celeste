@@ -4,19 +4,6 @@ import Index from "./views";
 import Register from "./views/register";
 
 function App() {
-
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js')
-            .then(reg => {
-              console.log('Service Worker registrado con éxito:', reg);
-            })
-            .catch(error => {
-              console.log('Error al registrar el Service Worker:', error);
-            });
-        });
-    }
-
     return (
         <Router>
             <Routes>
