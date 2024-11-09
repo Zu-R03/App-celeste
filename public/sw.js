@@ -61,34 +61,18 @@ self.addEventListener('fetch', event => {
     }
 });
 
-// eslint-disable-next-line no-restricted-globals
 self.addEventListener('push', event => {
-    const data = event.data ? event.data.json() : {};
-
-    const title = data.title || 'Nueva Notificación';
+    const payload = event.data.json();
+    
+    // Configuración de la notificación
+    const title = payload.title || 'Nueva Notificación';
     const options = {
-        body: data.body || 'Tienes una nueva notificación.',
-        icon: '/images/icon.png',  // Agrega una imagen de ícono si tienes
-        badge: '/images/badge.png'  // Agrega una imagen de insignia si tienes
+      body: payload.body || 'Tienes una nueva notificación',
     };
-
+  
+    // Mostrar la notificación
     event.waitUntil(
-        self.registration.showNotification(title, options)
-    );
-});
-
-// Maneja el evento de clic en la notificación para redirigir al usuario
-// eslint-disable-next-line no-restricted-globals
-self.addEventListener('notificationclick', event => {
-    event.notification.close();
-
-    event.waitUntil(
-        clients.matchAll({ type: 'window' }).then(clientList => {
-            for (const client of clientList) {
-                if (client.url === '/' && 'focus' in client) return client.focus();
-            }
-            if (clients.openWindow) return clients.openWindow('/');
-        })
+      self.registration.showNotification(title, options)
     );
 });
 
