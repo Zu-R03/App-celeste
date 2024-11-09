@@ -99,7 +99,7 @@ export function insertar(event) {
   });
 }
 
-function guardarEnIndexedDB(nombre, trabajo) {
+function guardarEnIndexedDB(name, lastname, email, password) {
   let db = window.indexedDB.open('database');
 
   db.onsuccess = event => {
@@ -107,7 +107,7 @@ function guardarEnIndexedDB(nombre, trabajo) {
       let transaccion = result.transaction('usuarios', 'readwrite');
       let obj = transaccion.objectStore('usuarios');
 
-      let resultado = obj.add({ name: nombre, job: trabajo });
+      let resultado = obj.add({ name: name, lastname: lastname, email: email, password:password });
       resultado.onsuccess = event => {
           console.log("Inserción realizada en IndexedDB");
       };
