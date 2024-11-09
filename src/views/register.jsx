@@ -19,13 +19,14 @@ export default function Register() {
                         </h2>
                     </div>
                     <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                        <form className="space-y-6" onSubmit={insertar}>
+                        <form className="space-y-6" onSubmit={insertar()}>
                             <div>
                                 <label htmlFor="name" className="block font-medium leading-6 text-gray-900">
                                     Nombre(s)
                                 </label>
                                 <div className="mt-2">
                                     <input
+                                        required={true}
                                         id="name"
                                         name="name"
                                         type="text"
@@ -40,6 +41,7 @@ export default function Register() {
                                 </label>
                                 <div className="mt-2">
                                     <input
+                                        required={true}
                                         id="lastname"
                                         name="lastname"
                                         type="text"
@@ -54,6 +56,7 @@ export default function Register() {
                                 </label>
                                 <div className="mt-2">
                                     <input
+                                        required={true}
                                         id="email"
                                         name="email"
                                         type="email"
@@ -72,6 +75,7 @@ export default function Register() {
                                 </div>
                                 <div className="mt-2">
                                     <input
+                                        required={true}
                                         id="password"
                                         name="password"
                                         type="password"
