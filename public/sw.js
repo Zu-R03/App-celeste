@@ -1,13 +1,14 @@
 // eslint-disable-next-line no-restricted-globals
 self.addEventListener('install', event => {
-    caches.open('appShell').then(cache => {
-        cache.addAll([
-            '/src/views/index.jsx',
-            '/src/views/register.jsx',
-            '/images/IMG_9485.jpeg',
-        ]);
-    });
-    
+    event.waitUntil(
+        caches.open('appShell').then(cache => {
+            return cache.addAll([
+                '/index.html',
+                '/register.html',
+                '/images/IMG_9485.jpeg'
+            ]);
+        })
+    );
 
     // eslint-disable-next-line no-restricted-globals
     self.skipWaiting();
