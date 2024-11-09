@@ -110,7 +110,7 @@ function sincronizarUsuarios() {
 
                 for (const usuario of usuarios) {
                     try {
-                        const response = await fetch('https://reqres.in/api/users', {
+                        const response = await fetch('https://symphony-server.onrender.com/api/users/create-user', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(usuario)

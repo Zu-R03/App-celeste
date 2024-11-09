@@ -70,7 +70,7 @@ export function insertar(event) {
       password: password,
   };
 
-  fetch('https://symphony-server.onrender.com/api/users', {
+  fetch('https://symphony-server.onrender.com/api/users/create-user', {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json'
