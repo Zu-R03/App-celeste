@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-restricted-globals
 self.addEventListener('install', event => {
-    caches.open('appShell3').then(cache => {
+    caches.open('appShell').then(cache => {
         cache.addAll([
             '/src/views/index.jsx',
             '/src/views/register.jsx',
@@ -15,7 +15,7 @@ self.addEventListener('install', event => {
 
 // eslint-disable-next-line no-restricted-globals
 self.addEventListener('activate', event => {
-    caches.delete('appShell2');
+    caches.delete('appShell');
 });
 
 // eslint-disable-next-line no-restricted-globals
