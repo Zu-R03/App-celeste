@@ -91,9 +91,10 @@ self.addEventListener('notificationclick', event => {
 // eslint-disable-next-line no-restricted-globals
 self.addEventListener('sync', event => {
     if (event.tag === 'sync-usuarios') {
+        console.log('Sincronización iniciada');
         event.waitUntil(sincronizarUsuarios());
     }
-});
+  });
 
 // Función para sincronizar usuarios guardados en IndexedDB con el servidor
 function sincronizarUsuarios() {
@@ -107,6 +108,7 @@ function sincronizarUsuarios() {
 
             store.getAll().onsuccess = async event => {
                 const usuarios = event.target.result;
+                console.log('Usuarios a sincronizar:', usuarios);  // Añadir log
 
                 for (const usuario of usuarios) {
                     try {
@@ -117,7 +119,8 @@ function sincronizarUsuarios() {
                         });
 
                         if (response.ok) {
-                            store.delete(usuario.id);  // Borra el usuario después de enviar
+                            console.log('Usuario sincronizado con éxito:', usuario);  // Añadir log
+                            store.delete(usuario.id);  // Borra el usuario después de enviarlo
                         }
                     } catch (error) {
                         console.error('Error al sincronizar usuario:', error);
