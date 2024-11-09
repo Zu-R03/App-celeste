@@ -3,7 +3,10 @@ self.addEventListener('install', event => {
     event.waitUntil(
         caches.open('appShell').then(cache => {
             return cache.addAll([
-                '/images/IMG_9485.jpeg'
+                '/',                        // Asegura que la página principal esté cacheada
+                '/index.html',              // Reemplaza con la ruta del HTML si es necesario
+                '/images/IMG_9485.jpeg',    // Imagen en la carpeta public
+                '/images/IMG_9495.jpeg'
             ]);
         })
     );
