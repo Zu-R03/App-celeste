@@ -19,7 +19,7 @@ export default function Register() {
                         </h2>
                     </div>
                     <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                        <form className="space-y-6" onSubmit={insertar(event)}>
+                        <form className="space-y-6" onSubmit={(event) => insertar(event)}>
                             <div>
                                 <label htmlFor="name" className="block font-medium leading-6 text-gray-900">
                                     Nombre(s)
