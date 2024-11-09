@@ -55,7 +55,7 @@ db.onupgradeneeded=event=>{
   result.createObjectStore('usuarios', {keyPath:'id', autoIncrement: true});
 }
 
-function insertar(event) {
+export function insertar(event) {
   event.preventDefault();
 
   const name = document.getElementById('name').value;
