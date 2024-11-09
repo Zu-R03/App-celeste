@@ -117,10 +117,12 @@ function sincronizarUsuarios() {
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(usuario)
                         });
-
+                        
                         if (response.ok) {
-                            console.log('Usuario sincronizado con éxito:', usuario);  // Añadir log
+                            console.log('Usuario sincronizado con éxito:', usuario); 
                             store.delete(usuario.id);  // Borra el usuario después de enviarlo
+                        } else {
+                            console.error('Error al sincronizar usuario:', response.statusText);
                         }
                     } catch (error) {
                         console.error('Error al sincronizar usuario:', error);
