@@ -22,8 +22,24 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
     // Solo gestionar solicitudes que sean de HTTP o HTTPS
     if (event.request.url.startsWith('http')) {
-        const resp = fetch(event.request).then(respuesta => {
-            if (!respuesta) {
+        // Si la solicitud es GET, manejamos la caché
+        if (event.request.method === 'GET') {
+            const resp = fetch(event.request).then(respuesta => {
+                if (!respuesta) {
+                    return caches.match(event.request).then(cachedResponse => {
+                        if (cachedResponse) {
+                            return cachedResponse;
+                        } else {
+                            return caches.match('/images/IMG_9485.jpeg');
+                        }
+                    });
+                } else {
+                    return caches.open('dinamico').then(cache => {
+                        cache.put(event.request, respuesta.clone());
+                        return respuesta;
+                    });
+                }
+            }).catch(() => {
                 return caches.match(event.request).then(cachedResponse => {
                     if (cachedResponse) {
                         return cachedResponse;
@@ -31,23 +47,13 @@ self.addEventListener('fetch', event => {
                         return caches.match('/images/IMG_9485.jpeg');
                     }
                 });
-            } else {
-                return caches.open('dinamico').then(cache => {
-                    cache.put(event.request, respuesta.clone());
-                    return respuesta;
-                });
-            }
-        }).catch(() => {
-            return caches.match(event.request).then(cachedResponse => {
-                if (cachedResponse) {
-                    return cachedResponse;
-                } else {
-                    return caches.match('/images/IMG_9485.jpeg');
-                }
             });
-        });
 
-        event.respondWith(resp);
+            event.respondWith(resp);
+        } else {
+            // Para solicitudes POST (o cualquier otro tipo que no sea GET), simplemente pasamos la solicitud
+            event.respondWith(fetch(event.request));
+        }
     }
 });
 
