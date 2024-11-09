@@ -3,8 +3,6 @@ self.addEventListener('install', event => {
     event.waitUntil(
         caches.open('appShell').then(cache => {
             return cache.addAll([
-                '/index.html',
-                '/register.html',
                 '/images/IMG_9485.jpeg'
             ]);
         })
