@@ -97,45 +97,62 @@ self.addEventListener('sync', event => {
   });
 
 // Función para sincronizar usuarios guardados en IndexedDB con el servidor
-function sincronizarUsuarios() {
-    return new Promise((resolve, reject) => {
-        const dbRequest = indexedDB.open('database');
-
-        dbRequest.onsuccess = event => {
-            const db = event.target.result;
-            const transaction = db.transaction('usuarios', 'readwrite');
-            const store = transaction.objectStore('usuarios');
-
-            store.getAll().onsuccess = async event => {
-                const usuarios = event.target.result;
-                console.log('Usuarios a sincronizar:', usuarios);  // Añadir log
-
-                for (const usuario of usuarios) {
-                    try {
-                        const response = await fetch('https://symphony-server.onrender.com/api/users/create-user', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(usuario)
-                        });
-                        
-                        if (response.ok) {
-                            console.log('Usuario sincronizado con éxito:', usuario); 
-                            store.delete(usuario.id);  // Borra el usuario después de enviarlo
-                        } else {
-                            console.error('Error al sincronizar usuario:', response.statusText);
-                        }
-                    } catch (error) {
-                        console.error('Error al sincronizar usuario:', error);
-                        reject(error);
-                    }
+async function sincronizarUsuarios() {
+    try {
+        // Abrir la base de datos
+        const db = await new Promise((resolve, reject) => {
+            const dbRequest = indexedDB.open('database', 1);  // Asegúrate de usar la versión correcta
+            dbRequest.onupgradeneeded = event => {
+                const db = event.target.result;
+                // Crear la tienda de objetos si no existe
+                if (!db.objectStoreNames.contains('usuarios')) {
+                    db.createObjectStore('usuarios', { keyPath: 'id', autoIncrement: true });
                 }
-                resolve();
             };
-        };
+            dbRequest.onsuccess = event => resolve(event.target.result);
+            dbRequest.onerror = error => reject(error);
+        });
 
-        dbRequest.onerror = error => {
-            console.error('Error al abrir la base de datos:', error);
-            reject(error);
-        };
-    });
+        // Obtener todos los usuarios guardados
+        const usuarios = await new Promise((resolve, reject) => {
+            const transaction = db.transaction('usuarios', 'readonly');
+            const store = transaction.objectStore('usuarios');
+            const usuariosRequest = store.getAll();
+            
+            usuariosRequest.onsuccess = event => resolve(event.target.result);
+            usuariosRequest.onerror = error => reject(error);
+        });
+
+        console.log('Usuarios a sincronizar:', usuarios);
+
+        // Sincronizar los usuarios con la API
+        for (const usuario of usuarios) {
+            if (!usuario.name || !usuario.email) {
+                console.error('Usuario incompleto, omitiendo:', usuario);
+                continue;  // Si el usuario tiene datos incompletos, lo omite
+            }
+
+            try {
+                const response = await fetch('https://symphony-server.onrender.com/api/users/create-user', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(usuario),
+                });
+
+                if (response.ok) {
+                    console.log('Usuario sincronizado con éxito:', usuario);
+                    // Eliminar el usuario de la base de datos después de sincronizarlo
+                    const transaction = db.transaction('usuarios', 'readwrite');
+                    const store = transaction.objectStore('usuarios');
+                    store.delete(usuario.id);
+                } else {
+                    console.error('Error al sincronizar usuario:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error al sincronizar usuario:', error);
+            }
+        }
+    } catch (error) {
+        console.error('Error al abrir la base de datos o sincronizar usuarios:', error);
+    }
 }
