@@ -20,6 +20,10 @@ self.addEventListener('activate', event => {
 
 // eslint-disable-next-line no-restricted-globals
 self.addEventListener('fetch', event => {
+    if (event.request.method === 'POST') {
+        return; // No intentamos cachear solicitudes POST
+    }
+    
     // Solo gestionar solicitudes que sean de HTTP o HTTPS
     if (event.request.url.startsWith('http')) {
         // Si la solicitud es GET, manejamos la caché
