@@ -11,16 +11,41 @@ root.render(
   </React.StrictMode>
 );
 
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(reg => {
-        console.log('Service Worker registrado con éxito:', reg);
-      })
-      .catch(error => {
-        console.log('Error al registrar el Service Worker:', error);
+const VAPID_PUBLIC_KEY = 'BNyHwQF_6yj6Iko4XWppzl4PFDc6fvb-cNm243Der9dhJct5Wv3JDezNYUOsCwdljvf6i4jehq_Yiou84QYGtLk';
+
+if ('serviceWorker' in navigator && 'PushManager' in window) {
+  navigator.serviceWorker.ready.then(async swRegistration => {
+    try {
+      // Suscribir al usuario
+      const subscription = await swRegistration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
       });
+
+      // Enviar la suscripción al servidor
+      await fetch('https://symphony-server.onrender.com/api/suscripciones/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(subscription)
+      });
+
+      console.log('Usuario suscrito exitosamente para notificaciones push');
+    } catch (error) {
+      console.error('Error al suscribir al usuario para notificaciones push:', error);
+    }
   });
+}
+
+// Convierte la clave de VAPID a un Uint8Array
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
 }
 
 let db=window.indexedDB.open('database');
@@ -45,7 +70,7 @@ export function insertar(event) {
       password: password,
   };
 
-  fetch('https://reqres.in/api/users', {
+  fetch('https://symphony-server.onrender.com/api/users', {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json'
