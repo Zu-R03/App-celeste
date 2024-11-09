@@ -92,103 +92,86 @@ self.addEventListener('notificationclick', event => {
     );
 });
 
-// eslint-disable-next-line no-restricted-globals
+self.addEventListener('sync', event=>{
+    console.log('sync:', event.tag)
+})
+
+self.addEventListener('fetch', event=>{
+    if(event.request.url.includes('https://symphony-server.onrender.com/api/users/create-user')){
+        fetch(event.request)
+        .catch(error=>{
+            self.registration.sync.register('insertar');
+        })
+    }
+})
+
 self.addEventListener('sync', event => {
     if (event.tag === 'sync-usuarios') {
-        console.log('Sincronización iniciada');
-        event.waitUntil(sincronizarUsuarios());
+        event.waitUntil(enviarDatosGuardados());
     }
-  });
+});
 
-// Función para sincronizar usuarios guardados en IndexedDB con el servidor
-function sincronizarUsuarios() {
-    return new Promise((resolve, reject) => {
-        // Abrir la base de datos IndexedDB
-        const dbRequest = indexedDB.open('database', 1); // Asegúrate de tener la versión correcta
+function enviarDatosGuardados() {
+    let db = indexedDB.open('database');
 
-        dbRequest.onupgradeneeded = event => {
-            const db = event.target.result;
-            if (!db.objectStoreNames.contains('usuarios')) {
-                db.createObjectStore('usuarios', { keyPath: 'id', autoIncrement: true });
-            }
-        };
+    db.onsuccess = event => {
+        let result = event.target.result;
+        procesarRegistros(result);  // Iniciar procesamiento de los registros
+    };
 
-        dbRequest.onsuccess = async event => {
-            const db = event.target.result;
-            try {
-                const usuarios = await obtenerUsuarios(db); // Obtener los usuarios guardados
-                console.log('Usuarios a sincronizar:', usuarios);
-
-                if (usuarios.length > 0) {
-                    for (const usuario of usuarios) {
-                        await sincronizarUsuario(db, usuario); // Sincronizar cada usuario
-                    }
-                    resolve();
-                } else {
-                    console.log('No hay usuarios para sincronizar');
-                    resolve();
-                }
-            } catch (error) {
-                console.error('Error al obtener o sincronizar los usuarios:', error);
-                reject(error);
-            }
-        };
-
-        dbRequest.onerror = error => {
-            console.error('Error al abrir la base de datos:', error);
-            reject(error);
-        };
-    });
+    db.onerror = event => {
+        console.error('Error al abrir la base de datos:', event.target.error);
+    };
 }
 
-// Obtener todos los usuarios guardados en la base de datos
-function obtenerUsuarios(db) {
-    return new Promise((resolve, reject) => {
-        const transaction = db.transaction('usuarios', 'readonly');
-        const store = transaction.objectStore('usuarios');
-        const request = store.getAll();
+function procesarRegistros(result) {
+    let transaccion = result.transaction('usuarios', 'readonly');
+    let objStore = transaccion.objectStore('usuarios');
 
-        request.onsuccess = event => resolve(event.target.result);
-        request.onerror = error => reject(error);
-    });
-}
+    let cursorRequest = objStore.openCursor();
 
-// Función para sincronizar un solo usuario con el servidor
-async function sincronizarUsuario(db, usuario) {
-    try {
-        const response = await fetch('https://symphony-server.onrender.com/api/users/create-user', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(usuario)
-        });
+    cursorRequest.onsuccess = event => {
+        let cursor = event.target.result;
 
-        if (response.ok) {
-            console.log('Usuario sincronizado con éxito:', usuario);
-            await eliminarUsuario(db, usuario.id); // Eliminar usuario de IndexedDB después de sincronizarlo
+        if (cursor) {
+            let currentValue = cursor.value;
+
+            // Enviar los datos a la API
+            fetch('https://symphony-server.onrender.com/api/users/create-user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(currentValue)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Datos enviados con éxito:', data);
+
+                // Abrir una nueva transacción para eliminar el registro
+                let deleteTransaction = result.transaction('usuarios', 'readwrite');
+                let deleteStore = deleteTransaction.objectStore('usuarios');
+                let deleteRequest = deleteStore.delete(cursor.key);
+
+                deleteRequest.onsuccess = () => {
+                    console.log('Registro eliminado con éxito');
+                    // Volver a abrir el cursor después de eliminar
+                    procesarRegistros(result);  // Volver a llamar para continuar con los siguientes registros
+                };
+
+                deleteRequest.onerror = () => {
+                    console.error('Error al eliminar el registro');
+                };
+            })
+            .catch(error => {
+                console.error('Error al enviar los datos guardados:', error);
+            });
         } else {
-            console.error('Error al sincronizar usuario:', response.statusText);
+            console.log('No hay más registros que enviar');
         }
-    } catch (error) {
-        console.error('Error al sincronizar usuario:', error);
-        throw error; // Propaga el error para que sea manejado por el `catch` de la función principal
-    }
-}
+    };
 
-// Eliminar un usuario de la base de datos después de que se haya sincronizado
-function eliminarUsuario(db, userId) {
-    return new Promise((resolve, reject) => {
-        const transaction = db.transaction('usuarios', 'readwrite');
-        const store = transaction.objectStore('usuarios');
-        const request = store.delete(userId);
-
-        request.onsuccess = () => {
-            console.log('Usuario eliminado de la base de datos:', userId);
-            resolve();
-        };
-
-        request.onerror = error => {
-            console.error('Error al eliminar el usuario:', error);
-            reject(error);
-        };
-    });
+    cursorRequest.onerror = event => {
+        console.error('Error al abrir el cursor:', event.target.error);
+    };
 }

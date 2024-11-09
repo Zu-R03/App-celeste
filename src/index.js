@@ -55,7 +55,7 @@ db.onupgradeneeded=event=>{
   result.createObjectStore('usuarios', {keyPath:'id', autoIncrement: true});
 }
 
-export function insertar(event) {
+function insertar(event) {
   event.preventDefault();
 
   const name = document.getElementById('name').value;
@@ -107,7 +107,7 @@ function guardarEnIndexedDB(name, lastname, email, password) {
       let transaccion = result.transaction('usuarios', 'readwrite');
       let obj = transaccion.objectStore('usuarios');
 
-      let resultado = obj.add({ name: name, lastname: lastname, email: email, password:password });
+      let resultado = obj.add({ name: name, lastname: lastname, email: email, password: password });
       resultado.onsuccess = event => {
           console.log("Inserción realizada en IndexedDB");
       };
