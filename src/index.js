@@ -14,24 +14,31 @@ root.render(
 const VAPID_PUBLIC_KEY = 'BNyHwQF_6yj6Iko4XWppzl4PFDc6fvb-cNm243Der9dhJct5Wv3JDezNYUOsCwdljvf6i4jehq_Yiou84QYGtLk';
 
 if ('serviceWorker' in navigator && 'PushManager' in window) {
-  navigator.serviceWorker.ready.then(async swRegistration => {
-    try {
-      // Suscribir al usuario
-      const subscription = await swRegistration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
-      });
+  // Primero, pedimos permiso al usuario
+  Notification.requestPermission().then(permission => {
+    if (permission === 'granted') {
+      navigator.serviceWorker.ready.then(async swRegistration => {
+        try {
+          // Suscribir al usuario
+          const subscription = await swRegistration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+          });
 
-      // Enviar la suscripción al servidor
-      await fetch('https://symphony-server.onrender.com/api/suscripciones/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(subscription)
-      });
+          // Enviar la suscripción al servidor
+          await fetch('https://symphony-server.onrender.com/api/suscripciones/subscribe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(subscription)
+          });
 
-      console.log('Usuario suscrito exitosamente para notificaciones push');
-    } catch (error) {
-      console.error('Error al suscribir al usuario para notificaciones push:', error);
+          console.log('Usuario suscrito exitosamente para notificaciones push');
+        } catch (error) {
+          console.error('Error al suscribir al usuario para notificaciones push:', error);
+        }
+      });
+    } else {
+      console.log('Permiso de notificación denegado');
     }
   });
 }
