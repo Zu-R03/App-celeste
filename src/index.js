@@ -24,6 +24,7 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
             userVisibleOnly: true,
             applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
           });
+          console.log('Iniciando proceso de registro de suscripción')
 
           // Enviar la suscripción al servidor
           await fetch('https://symphony-server.onrender.com/api/suscripciones/subscribe', {
