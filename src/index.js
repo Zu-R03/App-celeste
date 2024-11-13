@@ -13,41 +13,58 @@ root.render(
 
 const VAPID_PUBLIC_KEY = 'BNyHwQF_6yj6Iko4XWppzl4PFDc6fvb-cNm243Der9dhJct5Wv3JDezNYUOsCwdljvf6i4jehq_Yiou84QYGtLk';
 
+// Registrar el Service Worker si aún no lo has hecho
 if ('serviceWorker' in navigator && 'PushManager' in window) {
-  // Primero, pedimos permiso al usuario
-  Notification.requestPermission().then(permission => {
-    if (permission === 'granted') {
-      navigator.serviceWorker.ready.then(async swRegistration => {
-        try {
-          // Suscribir al usuario
-          const subscription = await swRegistration.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
-          });
-          console.log('Iniciando proceso de registro de suscripción')
+  navigator.serviceWorker.register('/sw.js')
+    .then(registration => {
+      console.log('Service Worker registrado con éxito:', registration);
 
-          // Enviar la suscripción al servidor
-          await fetch('https://symphony-server.onrender.com/api/suscripciones/subscribe', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(subscription)
-          });
+      // Pedimos permiso para notificaciones
+      Notification.requestPermission().then(permission => {
+        console.log(`Permiso de notificación: ${permission}`);
+        
+        if (permission === 'granted') {
+          navigator.serviceWorker.ready.then(async swRegistration => {
+            console.log('Service Worker está listo.');
 
-          console.log('Usuario suscrito exitosamente para notificaciones push');
-        } catch (error) {
-          console.error('Error al suscribir al usuario para notificaciones push:', error);
+            try {
+              const subscription = await swRegistration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+              });
+              console.log('Suscripción creada:', subscription);
+
+              // Enviar la suscripción al servidor
+              const response = await fetch('https://symphony-server.onrender.com/api/suscripciones/subscribe', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(subscription)
+              });
+
+              if (response.ok) {
+                console.log('Usuario suscrito exitosamente para notificaciones push');
+              } else {
+                console.error('Error en la respuesta del servidor:', response.statusText);
+              }
+            } catch (error) {
+              console.error('Error al suscribir al usuario para notificaciones push:', error);
+            }
+          }).catch(error => console.error('Error con Service Worker ready:', error));
+        } else {
+          console.log('Permiso de notificación denegado');
         }
-      });
-    } else {
-      console.log('Permiso de notificación denegado');
-    }
-  });
+      }).catch(error => console.error('Error al pedir permiso de notificación:', error));
+    })
+    .catch(error => {
+      console.error('Error al registrar el Service Worker:', error);
+    });
+} else {
+  console.warn('El navegador no soporta Service Worker o Push Manager.');
 }
 
-// Convierte la clave de VAPID a un Uint8Array
 function urlBase64ToUint8Array(base64String) {
   const padding = '='.repeat((4 - base64String.length % 4) % 4);
-  const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
   const rawData = window.atob(base64);
   const outputArray = new Uint8Array(rawData.length);
   for (let i = 0; i < rawData.length; ++i) {
