@@ -42,6 +42,10 @@ export default function Index() {
                                 className="w-full sm:w-40 lg:w-56 py-2 pl-10 pr-3 font-semibold text-black placeholder-gray-500 rounded-lg border-none ring-2 ring-gray-300"
                             />
                         </div>
+                        <Link to="/login"
+                              className="text-dark_complementary font-semibold bg-white border-2 border-secondary py-2 px-3 rounded-lg hover:bg-complementary hover:border-complementary hover:text-white transition duration-500 ease-in-out">
+                            Iniciar sesión
+                        </Link>
                         <Link to="/sign-up"
                               className="text-white font-semibold bg-secondary border-2 border-secondary py-2 px-3 rounded-lg hover:bg-white hover:border-complementary hover:text-dark_complementary transition duration-500 ease-in-out">
                             Crear cuenta
@@ -89,6 +93,13 @@ export default function Index() {
                                 className="w-full py-2 pl-10 pr-3 font-semibold text-black placeholder-gray-500 rounded-lg border-none ring-2 ring-gray-300"
                             />
                         </div>
+                        <Link
+                            to="/login"
+                            className="w-full py-3 text-dark_complementary font-semibold bg-white border-2 border-secondary rounded-lg hover:bg-complementary hover:border-complementary hover:text-white transition duration-500 ease-in-out"
+                            onClick={() => setIsOpen(false)}
+                        >
+                            Iniciar sesión
+                        </Link>
                         <Link
                             to="/sign-up"
                             className="w-full py-3 text-white font-semibold bg-secondary border-2 border-secondary rounded-lg hover:bg-white hover:border-complementary hover:text-dark_complementary transition duration-500 ease-in-out"
