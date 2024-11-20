@@ -59,12 +59,15 @@ export default function Index() {
                                 </Link>
                             </>
                         ) : (
-                            <button
-                                onClick={logout}
-                                className="text-white font-semibold bg-secondary border-2 border-secondary py-2 px-3 rounded-lg hover:bg-white hover:border-complementary hover:text-dark_complementary transition duration-500 ease-in-out"
-                            >
-                                Cerrar sesión
-                            </button>
+                            <>
+                                <p className="font-medium text-lg sm:text-xl">¡Hola {user.name}!</p>
+                                <button
+                                    onClick={logout}
+                                    className="text-white font-semibold bg-secondary border-2 border-secondary py-2 px-3 rounded-lg hover:bg-white hover:border-complementary hover:text-dark_complementary transition duration-500 ease-in-out"
+                                >
+                                    Cerrar sesión
+                                </button>
+                            </>
                         )}
                     </div>
                 </div>
