@@ -82,9 +82,9 @@ self.addEventListener('sync', event => {
     if (event.tag === 'sync-usuarios') {
       event.waitUntil(enviarDatosGuardados());
     }
-  });
+});
   
-  function enviarDatosGuardados() {
+function enviarDatosGuardados() {
     let db = indexedDB.open('database');
   
     db.onsuccess = event => {
@@ -95,9 +95,9 @@ self.addEventListener('sync', event => {
     db.onerror = event => {
       console.error('Error al abrir la base de datos:', event.target.error);
     };
-  }
+}
   
-  function procesarRegistros(result) {
+function procesarRegistros(result) {
     let transaccion = result.transaction('usuarios', 'readonly');
     let objStore = transaccion.objectStore('usuarios');
   

@@ -191,7 +191,7 @@ export function insertar(event) {
       confirmButtonText: 'Aceptar',
     }).then(() => {
       // Redirigir a la página principal después de que el usuario presione "Aceptar"
-      window.location.href = '/'; // Redirige a la página principal
+      window.location.href = '/login'; // Redirige a la página principal
     });
   })
   .catch(error => {
