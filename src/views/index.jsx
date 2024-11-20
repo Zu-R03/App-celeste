@@ -66,14 +66,6 @@ export default function Index() {
                                 Cerrar sesión
                             </button>
                         )}
-                        <Link to="/login"
-                              className="text-dark_complementary font-semibold bg-white border-2 border-secondary py-2 px-3 rounded-lg hover:bg-complementary hover:border-complementary hover:text-white transition duration-500 ease-in-out">
-                            Iniciar sesión
-                        </Link>
-                        <Link to="/sign-up"
-                              className="text-white font-semibold bg-secondary border-2 border-secondary py-2 px-3 rounded-lg hover:bg-white hover:border-complementary hover:text-dark_complementary transition duration-500 ease-in-out">
-                            Crear cuenta
-                        </Link>
                     </div>
                 </div>
 
