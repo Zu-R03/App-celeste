@@ -191,22 +191,49 @@ export function insertar(event) {
         confirmButtonText: 'Aceptar',
       });
   })
-  .catch(error => {
-      console.log('Error en la solicitud, guardando en la BD del navegador:', error);
-      Swal.fire({
-        title: 'Sin conexión',
-        text: 'No tienes conexión a internet. Guardaremos tus datos para intentarlo más tarde.',
-        icon: 'warning',
-        confirmButtonText: 'Aceptar',
-      });
-      guardarEnIndexedDB(name, lastname, email, password);
+  .catch(async (error) => {
+      console.log('Error en la solicitud:', error);
 
-      // Registramos la sincronización para reintentar el envío
-      if ('serviceWorker' in navigator && 'SyncManager' in window) {
-          navigator.serviceWorker.ready.then(sw => {
-              return sw.sync.register('sync-usuarios');
-          }).catch(err => console.log('Error registrando el sync:', err));
+      // Verificar si es un error de red
+      if (!navigator.onLine) {
+          Swal.fire({
+              title: 'Sin conexión',
+              text: 'No tienes conexión a internet. Guardaremos tus datos para intentarlo más tarde.',
+              icon: 'warning',
+              confirmButtonText: 'Aceptar',
+          });
+          guardarEnIndexedDB(name, lastname, email, password);
+
+          if ('serviceWorker' in navigator && 'SyncManager' in window) {
+              navigator.serviceWorker.ready.then(sw => {
+                  return sw.sync.register('sync-usuarios');
+              }).catch(err => console.log('Error registrando el sync:', err));
+          }
+          return;
       }
+
+      // Intentar obtener más detalles del error
+      let errorMessage = 'Error desconocido';
+      try {
+          // Si `response.json()` falla, significa que no es un error JSON
+          const errorResponse = await error.response?.json();
+          errorMessage = errorResponse?.message || 'Error al procesar la solicitud';
+      } catch {
+          if (error.response?.status) {
+              errorMessage = `Error del servidor: ${error.response.status}`;
+          } else {
+              errorMessage = 'No se pudo procesar la respuesta del servidor.';
+          }
+      }
+
+      Swal.fire({
+          title: 'Error al crear la cuenta',
+          text: errorMessage,
+          icon: 'error',
+          confirmButtonText: 'Aceptar',
+      });
+
+      console.error('Detalles del error:', error);
   });
 }
 
