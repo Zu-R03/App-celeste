@@ -6,6 +6,7 @@ import { useAuth } from "../context/AuthContext";
 
 export default function Index() {
     const [isOpen, setIsOpen] = useState(false);
+    const { user, logout } = useAuth();
     return (
         <>
             <nav className="sticky top-0 w-full bg-white shadow-sm z-50">
