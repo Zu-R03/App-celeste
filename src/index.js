@@ -195,23 +195,36 @@ export function insertar(event) {
     });
   })
   .catch(error => {
-    console.log('Error en la solicitud, guardando en la BD del navegador:', error);
-    // Mostrar alerta de error con SweetAlert2
-    Swal.fire({
-      title: 'Error al crear la cuenta',
-      text: 'Hubo un problema al intentar crear la cuenta. Guardaremos tus datos para intentarlo más tarde.',
-      icon: 'error',
-      confirmButtonText: 'Aceptar',
-    });
+    console.log('Error en la solicitud:', error);
 
-    // Guardamos los datos en IndexedDB para enviarlos más tarde
-    guardarEnIndexedDB(name, lastname, email, password);
+    // Verificar si hay conexión a internet
+    if (!navigator.onLine) {
+      console.log('No hay conexión a Internet. Guardando datos en IndexedDB...');
+      // Mostrar alerta de error con SweetAlert2
+      Swal.fire({
+        title: 'Sin conexión',
+        text: 'No tienes conexión a internet. Guardaremos tus datos para intentarlo más tarde.',
+        icon: 'warning',
+        confirmButtonText: 'Aceptar',
+      });
 
-    // Registramos la sincronización para reintentar el envío cuando haya conexión
-    if ('serviceWorker' in navigator && 'SyncManager' in window) {
-      navigator.serviceWorker.ready.then(sw => {
-        return sw.sync.register('sync-usuarios');
-      }).catch(err => console.log('Error registrando el sync:', err));
+      // Guardamos los datos en IndexedDB para enviarlos más tarde
+      guardarEnIndexedDB(name, lastname, email, password);
+
+      // Registramos la sincronización para reintentar el envío cuando haya conexión
+      if ('serviceWorker' in navigator && 'SyncManager' in window) {
+        navigator.serviceWorker.ready.then(sw => {
+          return sw.sync.register('sync-usuarios');
+        }).catch(err => console.log('Error registrando el sync:', err));
+      }
+    } else {
+      // Si hay conexión a internet pero hay un error en la API
+      Swal.fire({
+        title: 'Error al crear la cuenta',
+        text: 'Hubo un problema al intentar crear la cuenta. Por favor, inténtalo de nuevo más tarde.',
+        icon: 'error',
+        confirmButtonText: 'Aceptar',
+      });
     }
   });
 }
