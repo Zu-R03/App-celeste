@@ -21,6 +21,9 @@ const user = JSON.parse(sessionStorage.getItem('user'));
 
 // Solo registrar el Service Worker si el usuario está logueado
 if (user && 'serviceWorker' in navigator && 'PushManager' in window) {
+
+  const user = JSON.parse(sessionStorage.getItem('user'));
+
   navigator.serviceWorker.register('/sw.js')
     .then(registration => {
       console.log('Service Worker registrado con éxito:', registration);
@@ -44,7 +47,10 @@ if (user && 'serviceWorker' in navigator && 'PushManager' in window) {
               const response = await fetch('https://symphony-server.onrender.com/api/suscripciones/subscribe', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(subscription)
+                body: JSON.stringify({
+                  subscription: subscription,
+                  userId: user.id
+                })
               });
 
               if (response.ok) {
