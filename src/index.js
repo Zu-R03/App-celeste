@@ -5,6 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { AuthProvider } from './context/AuthContext';
 import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -135,8 +136,8 @@ export function login(event) {
       icon: 'success',
       confirmButtonText: 'Aceptar',
     }).then(() => {
-      // Redirigir a la página principal después de que el usuario presione "Aceptar"
-      window.location.href = '/'; // Redirige a la página principal
+      const navigate = useNavigate();
+      navigate('/');
     });
 
   })
@@ -190,8 +191,8 @@ export function insertar(event) {
       icon: 'success',
       confirmButtonText: 'Aceptar',
     }).then(() => {
-      // Redirigir a la página de login o donde desees después del éxito
-      window.location.href = '/login'; // Redirigir a la página de login
+      const navigate = useNavigate();
+      navigate('/login');
     });
   })
   .catch(error => {
