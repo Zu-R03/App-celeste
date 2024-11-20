@@ -192,48 +192,42 @@ export function insertar(event) {
       });
   })
   .catch(async (error) => {
-      console.log('Error en la solicitud:', error);
+    console.log('Error en la solicitud:', error);
 
-      // Verificar si es un error de red
-      if (!navigator.onLine) {
-          Swal.fire({
-              title: 'Sin conexión',
-              text: 'No tienes conexión a internet. Guardaremos tus datos para intentarlo más tarde.',
-              icon: 'warning',
-              confirmButtonText: 'Aceptar',
-          });
-          guardarEnIndexedDB(name, lastname, email, password);
+    if (!navigator.onLine) {
+        // Guardar datos solo si el error es de conexión
+        Swal.fire({
+            title: 'Sin conexión',
+            text: 'No tienes conexión a internet. Guardaremos tus datos para intentarlo más tarde.',
+            icon: 'warning',
+            confirmButtonText: 'Aceptar',
+        });
+        guardarEnIndexedDB(name, lastname, email, password);
 
-          if ('serviceWorker' in navigator && 'SyncManager' in window) {
-              navigator.serviceWorker.ready.then(sw => {
-                  return sw.sync.register('sync-usuarios');
-              }).catch(err => console.log('Error registrando el sync:', err));
-          }
-          return;
-      }
+        if ('serviceWorker' in navigator && 'SyncManager' in window) {
+            navigator.serviceWorker.ready.then(sw => {
+                return sw.sync.register('sync-usuarios');
+            }).catch(err => console.log('Error registrando el sync:', err));
+        }
+        return;
+    }
 
-      // Intentar obtener más detalles del error
-      let errorMessage = 'Error desconocido';
-      try {
-          // Si `response.json()` falla, significa que no es un error JSON
-          const errorResponse = await error.response?.json();
-          errorMessage = errorResponse?.message || 'Error al procesar la solicitud';
-      } catch {
-          if (error.response?.status) {
-              errorMessage = `Error del servidor: ${error.response.status}`;
-          } else {
-              errorMessage = 'No se pudo procesar la respuesta del servidor.';
-          }
-      }
+    let errorMessage = 'Error desconocido';
+    try {
+        const errorResponse = await error.response?.json();
+        errorMessage = errorResponse?.message || 'Error al procesar la solicitud';
+    } catch {
+        if (error.response?.status) {
+            errorMessage = `Error del servidor: ${error.response.status}`;
+        }
+    }
 
-      Swal.fire({
-          title: 'Error al crear la cuenta',
-          text: errorMessage,
-          icon: 'error',
-          confirmButtonText: 'Aceptar',
-      });
-
-      console.error('Detalles del error:', error);
+    Swal.fire({
+        title: 'Error al crear la cuenta',
+        text: errorMessage,
+        icon: 'error',
+        confirmButtonText: 'Aceptar',
+    });
   });
 }
 
@@ -245,12 +239,25 @@ function guardarEnIndexedDB(name, lastname, email, password) {
       let transaccion = result.transaction('usuarios', 'readwrite');
       let obj = transaccion.objectStore('usuarios');
 
-      let resultado = obj.add({ name: name, lastname: lastname, email: email, password: password });
-      resultado.onsuccess = event => {
-          console.log("Inserción realizada en IndexedDB");
+      // Verificar si el email ya existe
+      let request = obj.get(email);
+      request.onsuccess = event => {
+          if (!event.target.result) {
+              // Si no existe, insertar
+              let resultado = obj.add({ name, lastname, email, password });
+              resultado.onsuccess = () => {
+                  console.log("Inserción realizada en IndexedDB");
+              };
+              resultado.onerror = event => {
+                  console.error("Error al insertar en IndexedDB:", event.target.error);
+              };
+          } else {
+              console.log("El correo ya está registrado en IndexedDB");
+          }
       };
-      resultado.onerror = event => {
-          console.error("Error al insertar en IndexedDB:", event.target.error);
+
+      request.onerror = event => {
+          console.error("Error al buscar en IndexedDB:", event.target.error);
       };
   };
 

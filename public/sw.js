@@ -78,14 +78,17 @@ self.addEventListener('push', event => {
     );
 });
 
-self.addEventListener('fetch', event=>{
-  if(event.request.url.includes('https://symphony-server.onrender.com/api/users/create-user')){
-      fetch(event.request)
-      .catch(error=>{
-          self.registration.sync.register('insertar');
-      })
-  }
-})
+self.addEventListener('fetch', event => {
+    if (event.request.url.includes('https://symphony-server.onrender.com/api/users/create-user')) {
+        event.respondWith(
+            fetch(event.request).catch(() => {
+                if ('SyncManager' in self) {
+                    self.registration.sync.register('sync-usuarios');
+                }
+            })
+        );
+    }
+});
 
 self.addEventListener('sync', event => {
   if (event.tag === 'sync-usuarios') {
