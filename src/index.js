@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { AuthProvider } from './context/AuthContext';
+import Swal from 'sweetalert2';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -52,7 +53,7 @@ if (user && 'serviceWorker' in navigator && 'PushManager' in window) {
                   subscription: subscription // Enviar el objeto completo
                 })
               });
-              
+
               if (response.ok) {
                 console.log('Usuario suscrito exitosamente para notificaciones push');
               } else {
@@ -102,37 +103,52 @@ export function login(event) {
   const password = document.getElementById('password').value;
 
   const data = {
-      email: email,
-      password: password,
+    email: email,
+    password: password,
   };
 
   fetch('https://symphony-server.onrender.com/api/users/login', {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data)
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
   })
   .then(response => {
-      if (!response.ok) {
-          throw new Error('Fallo en la autenticación');
-      }
-      return response.json();
+    if (!response.ok) {
+      throw new Error('Fallo en la autenticación');
+    }
+    return response.json();
   })
   .then(data => {
-      // Si la autenticación es exitosa, puedes guardar el token en sessionStorage
-      console.log('Autenticación exitosa:', data);
+    // Si la autenticación es exitosa, puedes guardar el token en sessionStorage
+    console.log('Autenticación exitosa:', data);
 
-      // Guardar el token o algún dato relevante en sessionStorage
-      sessionStorage.setItem('authToken', data.token); // Suponiendo que la respuesta incluye un token
-      sessionStorage.setItem('user', JSON.stringify(data.user)); // Guardar información del usuario
+    // Guardar el token o algún dato relevante en sessionStorage
+    sessionStorage.setItem('authToken', data.token); // Suponiendo que la respuesta incluye un token
+    sessionStorage.setItem('user', JSON.stringify(data.user)); // Guardar información del usuario
 
-      // Redirigir a la página principal o la página deseada
-      window.location.href = '/'; // O usa React Router si es una aplicación React
+    // Mostrar una alerta de éxito con SweetAlert2
+    Swal.fire({
+      title: 'Login exitoso!',
+      text: 'Bienvenido ' + data.user.name, // Puedes mostrar el nombre del usuario si lo tienes
+      icon: 'success',
+      confirmButtonText: 'Aceptar',
+    });
+
+    // Redirigir a la página principal o la página deseada
+    window.location.href = '/'; // O usa React Router si es una aplicación React
   })
   .catch(error => {
-      console.error('Error en la solicitud de inicio de sesión:', error);
-      // Puedes manejar el error de alguna manera, como mostrar un mensaje al usuario
+    console.error('Error en la solicitud de inicio de sesión:', error);
+
+    // Mostrar una alerta de error con SweetAlert2
+    Swal.fire({
+      title: 'Error en el inicio de sesión',
+      text: 'Por favor, revisa tus credenciales.',
+      icon: 'error',
+      confirmButtonText: 'Aceptar',
+    });
   });
 }
 
