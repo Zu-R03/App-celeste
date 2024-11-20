@@ -1,6 +1,7 @@
 import React from "react";
 import {Link, useNavigate} from "react-router-dom";
-import { insertar } from "..";
+import { login } from "..";
+import { useAuth } from "../context/AuthContext";
 export default function Login() {
 
     const navigate = useNavigate();
@@ -9,17 +10,19 @@ export default function Login() {
         navigate('/home');
     };*/
 
+    const { user, logout } = useAuth();
+
     return (
         <>
             <div className="flex min-h-screen flex-1 flex-col items-center justify-center px-6 py-12 lg:px-8 bg-primary">
                 <div className="bg-white p-10 sm:mx-auto sm:w-full sm:max-w-sm rounded-xl">
                     <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                         <h2 className=" text-center text-2xl font-semibold text-gray-900">
-                            Inicia sesión
+                            {user?.name} Inicia sesión
                         </h2>
                     </div>
                     <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                        <form className="space-y-6" onSubmit={(event) => insertar(event)}>
+                        <form className="space-y-6" onSubmit={(event) => login(event)}>
                             <div>
                                 <label htmlFor="email" className="block font-medium leading-6 text-gray-900">
                                     Correo electrónico

@@ -3,11 +3,14 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { AuthProvider } from './context/AuthContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <AuthProvider>
+      <App />
+    </AuthProvider>,
   </React.StrictMode>
 );
 
@@ -78,6 +81,47 @@ let db=window.indexedDB.open('database');
 db.onupgradeneeded=event=>{
   let result = event.target.result;
   result.createObjectStore('usuarios', {keyPath:'id', autoIncrement: true});
+}
+
+export function login(event) {
+  event.preventDefault();
+
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+
+  const data = {
+      email: email,
+      password: password,
+  };
+
+  fetch('https://symphony-server.onrender.com/api/users/login', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+  })
+  .then(response => {
+      if (!response.ok) {
+          throw new Error('Fallo en la autenticación');
+      }
+      return response.json();
+  })
+  .then(data => {
+      // Si la autenticación es exitosa, puedes guardar el token en sessionStorage
+      console.log('Autenticación exitosa:', data);
+
+      // Guardar el token o algún dato relevante en sessionStorage
+      sessionStorage.setItem('authToken', data.token); // Suponiendo que la respuesta incluye un token
+      sessionStorage.setItem('user', JSON.stringify(data.user)); // Guardar información del usuario
+
+      // Redirigir a la página principal o la página deseada
+      window.location.href = '/'; // O usa React Router si es una aplicación React
+  })
+  .catch(error => {
+      console.error('Error en la solicitud de inicio de sesión:', error);
+      // Puedes manejar el error de alguna manera, como mostrar un mensaje al usuario
+  });
 }
 
 export function insertar(event) {
