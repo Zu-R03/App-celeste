@@ -48,8 +48,10 @@ if (user && 'serviceWorker' in navigator && 'PushManager' in window) {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                  subscription: subscription,
-                  userId: user.id
+                  userId: user.id,
+                  endpoint: subscription.endpoint,
+                  expirationTime: subscription.expirationTime,
+                  keys: subscription.keys
                 })
               });
 
