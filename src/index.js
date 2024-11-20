@@ -161,56 +161,58 @@ export function insertar(event) {
   const password = document.getElementById('password').value;
 
   const data = {
-      name: name,
-      lastname: lastname,
-      email: email,
-      password: password,
+    name: name,
+    lastname: lastname,
+    email: email,
+    password: password,
   };
 
   fetch('https://symphony-server.onrender.com/api/users/create-user', {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
   })
   .then(response => {
-      if (!response.ok) {
-        Swal.fire({
-          title: 'Ocurrió un error',
-          text: 'Verifica tus datos o intentalo de nuevo más tarde',
-          icon: 'error',
-        });
-        throw new Error('Fallo en la solicitud');
-      }
-      return response.json();
+    if (!response.ok) {
+      throw new Error('Fallo en la solicitud');
+    }
+    return response.json();
   })
   .then(data => {
-      console.log('Datos enviados con éxito:', data);
-      Swal.fire({
-        title: 'Tu cuenta ha sido creada!',
-        text: 'Que disfrutes Symphony Music',
-        icon: 'success',
-        confirmButtonText: 'Aceptar',
-      }).then(() => {
-        // Redirigir a la página principal después de que el usuario presione "Aceptar"
-        window.location.href = '/login'; // Redirige a la página principal
-      });
+    console.log('Cuenta creada exitosamente:', data);
+
+    // Mostrar alerta de éxito con SweetAlert2
+    Swal.fire({
+      title: 'Cuenta creada!',
+      text: 'Tu cuenta ha sido creada exitosamente. ¡Bienvenido!',
+      icon: 'success',
+      confirmButtonText: 'Aceptar',
+    }).then(() => {
+      // Redirigir a la página de login o donde desees después del éxito
+      window.location.href = '/login'; // Redirigir a la página de login
+    });
   })
   .catch(error => {
-      console.log('Error en la solicitud, guardando en la BD del navegador:', error);
-      Swal.fire({
-        title: 'No tienes conexión a internet',
-        text: 'Intentaremos crear tu cuenta cuando te reconectes a una red Wi-Fi',
-        icon: 'error',
-      });
-      guardarEnIndexedDB(name, lastname, email, password);
-      // Registramos la sincronización para reintentar el envío
-      if ('serviceWorker' in navigator && 'SyncManager' in window) {
-          navigator.serviceWorker.ready.then(sw => {
-              return sw.sync.register('sync-usuarios');
-          }).catch(err => console.log('Error registrando el sync:', err));
-      }
+    console.log('Error en la solicitud, guardando en la BD del navegador:', error);
+    // Mostrar alerta de error con SweetAlert2
+    Swal.fire({
+      title: 'Error al crear la cuenta',
+      text: 'Hubo un problema al intentar crear la cuenta. Guardaremos tus datos para intentarlo más tarde.',
+      icon: 'error',
+      confirmButtonText: 'Aceptar',
+    });
+
+    // Guardamos los datos en IndexedDB para enviarlos más tarde
+    guardarEnIndexedDB(name, lastname, email, password);
+
+    // Registramos la sincronización para reintentar el envío cuando haya conexión
+    if ('serviceWorker' in navigator && 'SyncManager' in window) {
+      navigator.serviceWorker.ready.then(sw => {
+        return sw.sync.register('sync-usuarios');
+      }).catch(err => console.log('Error registrando el sync:', err));
+    }
   });
 }
 
