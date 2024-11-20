@@ -16,8 +16,11 @@ root.render(
 
 const VAPID_PUBLIC_KEY = 'BNyHwQF_6yj6Iko4XWppzl4PFDc6fvb-cNm243Der9dhJct5Wv3JDezNYUOsCwdljvf6i4jehq_Yiou84QYGtLk';
 
-// Registrar el Service Worker si aún no lo has hecho
-if ('serviceWorker' in navigator && 'PushManager' in window) {
+// Verificar si el usuario está logueado
+const user = JSON.parse(sessionStorage.getItem('user'));
+
+// Solo registrar el Service Worker si el usuario está logueado
+if (user && 'serviceWorker' in navigator && 'PushManager' in window) {
   navigator.serviceWorker.register('/sw.js')
     .then(registration => {
       console.log('Service Worker registrado con éxito:', registration);
@@ -62,6 +65,9 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
       console.error('Error al registrar el Service Worker:', error);
     });
 } else {
+  if (!user) {
+    console.log('El usuario no está logueado. No se solicitarán notificaciones.');
+  }
   console.warn('El navegador no soporta Service Worker o Push Manager.');
 }
 
