@@ -49,12 +49,10 @@ if (user && 'serviceWorker' in navigator && 'PushManager' in window) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                   userId: user.id,
-                  endpoint: subscription.endpoint,
-                  expirationTime: subscription.expirationTime,
-                  keys: subscription.keys
+                  subscription: subscription // Enviar el objeto completo
                 })
               });
-
+              
               if (response.ok) {
                 console.log('Usuario suscrito exitosamente para notificaciones push');
               } else {
