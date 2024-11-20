@@ -189,10 +189,7 @@ export function insertar(event) {
         text: 'Tu cuenta ha sido creada exitosamente. ¡Bienvenido!',
         icon: 'success',
         confirmButtonText: 'Aceptar',
-      }).then(() => {
-        // Redirigir a la página principal después de que el usuario presione "Aceptar"
-        window.location.href = '/'; // Redirige a la página principal
-      });
+      })
   })
   .catch(error => {
       console.log('Error en la solicitud, guardando en la BD del navegador:', error);
