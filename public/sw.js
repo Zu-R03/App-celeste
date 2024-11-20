@@ -78,110 +78,75 @@ self.addEventListener('push', event => {
     );
 });
 
-self.addEventListener('sync', event=>{
-    console.log('sync:', event.tag)
-})
-
-self.addEventListener('fetch', event => {
-    if (event.request.url.includes('https://symphony-server.onrender.com/api/users/create-user') && event.request.method === 'POST') {
-        // Intentar realizar la solicitud
-        event.respondWith(
-            fetch(event.request)
-                .then(response => {
-                    // Si el servidor responde correctamente, devolver la respuesta original
-                    if (response.ok) {
-                        return response;
-                    }
-                    // Si falla, registrar para sincronización
-                    throw new Error('Error en la solicitud');
-                })
-                .catch(error => {
-                    console.error('Fetch fallido. Registrando para sincronización:', error);
-
-                    // Registrar la sincronización solo si falla la solicitud
-                    if ('sync' in self.registration) {
-                        self.registration.sync.register('sync-usuarios').catch(err => {
-                            console.error('Error al registrar sync:', err);
-                        });
-                    }
-
-                    // Devuelve una respuesta personalizada (opcional)
-                    return new Response(
-                        JSON.stringify({ error: 'Solicitud fallida, registrada para sincronización' }),
-                        { status: 503, headers: { 'Content-Type': 'application/json' } }
-                    );
-                })
-        );
-    }
-});
-
 self.addEventListener('sync', event => {
     if (event.tag === 'sync-usuarios') {
-        event.waitUntil(enviarDatosGuardados());
+      event.waitUntil(enviarDatosGuardados());
     }
-});
-
-function enviarDatosGuardados() {
+  });
+  
+  function enviarDatosGuardados() {
     let db = indexedDB.open('database');
-
+  
     db.onsuccess = event => {
-        let result = event.target.result;
-        procesarRegistros(result);  // Iniciar procesamiento de los registros
+      let result = event.target.result;
+      procesarRegistros(result);
     };
-
+  
     db.onerror = event => {
-        console.error('Error al abrir la base de datos:', event.target.error);
+      console.error('Error al abrir la base de datos:', event.target.error);
     };
-}
-
-function procesarRegistros(result) {
+  }
+  
+  function procesarRegistros(result) {
     let transaccion = result.transaction('usuarios', 'readonly');
     let objStore = transaccion.objectStore('usuarios');
-
+  
     let cursorRequest = objStore.openCursor();
-
+  
     cursorRequest.onsuccess = event => {
-        let cursor = event.target.result;
-
-        if (cursor) {
-            let currentValue = cursor.value;
-
-            // Enviar los datos a la API
-            fetch('https://symphony-server.onrender.com/api/users/create-user', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(currentValue)
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Datos enviados con éxito:', data);
-
-                // Abrir una nueva transacción para eliminar el registro
-                let deleteTransaction = result.transaction('usuarios', 'readwrite');
-                let deleteStore = deleteTransaction.objectStore('usuarios');
-                let deleteRequest = deleteStore.delete(cursor.key);
-
-                deleteRequest.onsuccess = () => {
-                    console.log('Registro eliminado con éxito');
-                    // Volver a abrir el cursor después de eliminar
-                    procesarRegistros(result);  // Volver a llamar para continuar con los siguientes registros
-                };
-
-                deleteRequest.onerror = () => {
-                    console.error('Error al eliminar el registro');
-                };
-            })
-            .catch(error => {
-                console.error('Error al enviar los datos guardados:', error);
-            });
+      let cursor = event.target.result;
+  
+      if (cursor) {
+        let currentValue = cursor.value;
+  
+        // Verifica si hay conexión antes de enviar los datos
+        if (navigator.onLine) {
+          fetch('https://symphony-server.onrender.com/api/users/create-user', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(currentValue)
+          })
+          .then(response => response.json())
+          .then(data => {
+            console.log('Datos enviados con éxito:', data);
+  
+            let deleteTransaction = result.transaction('usuarios', 'readwrite');
+            let deleteStore = deleteTransaction.objectStore('usuarios');
+            let deleteRequest = deleteStore.delete(cursor.key);
+  
+            deleteRequest.onsuccess = () => {
+              console.log('Registro eliminado con éxito');
+              procesarRegistros(result);  // Volver a llamar para continuar con los siguientes registros
+            };
+  
+            deleteRequest.onerror = () => {
+              console.error('Error al eliminar el registro');
+            };
+          })
+          .catch(error => {
+            console.error('Error al enviar los datos guardados:', error);
+          });
         } else {
-            console.log('No hay más registros que enviar');
+          console.log('No hay conexión. Los datos no se enviarán hasta que haya conexión.');
         }
+      } else {
+        console.log('No hay más registros que enviar');
+      }
     };
-
+  
     cursorRequest.onerror = event => {
-        console.error('Error al abrir el cursor:', event.target.error);
+      console.error('Error al abrir el cursor:', event.target.error);
     };
 }

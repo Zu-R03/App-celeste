@@ -183,24 +183,20 @@ export function insertar(event) {
   .then(data => {
     console.log('Cuenta creada exitosamente:', data);
 
-    // Mostrar alerta de éxito con SweetAlert2
     Swal.fire({
       title: 'Cuenta creada!',
       text: 'Tu cuenta ha sido creada exitosamente. ¡Bienvenido!',
       icon: 'success',
       confirmButtonText: 'Aceptar',
     }).then(() => {
-      // Redirigir a la página principal después de que el usuario presione "Aceptar"
-      window.location.href = '/login'; // Redirige a la página principal
+      window.location.href = '/login';
     });
   })
   .catch(error => {
     console.log('Error en la solicitud:', error);
 
-    // Verificar si hay conexión a internet
     if (!navigator.onLine) {
       console.log('No hay conexión a Internet. Guardando datos en IndexedDB...');
-      // Mostrar alerta de error con SweetAlert2
       Swal.fire({
         title: 'Sin conexión',
         text: 'No tienes conexión a internet. Guardaremos tus datos para intentarlo más tarde.',
@@ -208,17 +204,15 @@ export function insertar(event) {
         confirmButtonText: 'Aceptar',
       });
 
-      // Guardamos los datos en IndexedDB para enviarlos más tarde
       guardarEnIndexedDB(name, lastname, email, password);
 
-      // Registramos la sincronización para reintentar el envío cuando haya conexión
+      // Registra la sincronización solo si no hay conexión
       if ('serviceWorker' in navigator && 'SyncManager' in window) {
         navigator.serviceWorker.ready.then(sw => {
           return sw.sync.register('sync-usuarios');
         }).catch(err => console.log('Error registrando el sync:', err));
       }
     } else {
-      // Si hay conexión a internet pero hay un error en la API
       Swal.fire({
         title: 'Error al crear la cuenta',
         text: 'Hubo un problema al intentar crear la cuenta. Por favor, inténtalo de nuevo más tarde.',
@@ -233,21 +227,21 @@ function guardarEnIndexedDB(name, lastname, email, password) {
   let db = window.indexedDB.open('database');
 
   db.onsuccess = event => {
-      let result = event.target.result;
-      let transaccion = result.transaction('usuarios', 'readwrite');
-      let obj = transaccion.objectStore('usuarios');
+    let result = event.target.result;
+    let transaccion = result.transaction('usuarios', 'readwrite');
+    let obj = transaccion.objectStore('usuarios');
 
-      let resultado = obj.add({ name: name, lastname: lastname, email: email, password: password });
-      resultado.onsuccess = event => {
-          console.log("Inserción realizada en IndexedDB");
-      };
-      resultado.onerror = event => {
-          console.error("Error al insertar en IndexedDB:", event.target.error);
-      };
+    let resultado = obj.add({ name, lastname, email, password });
+    resultado.onsuccess = event => {
+      console.log("Inserción realizada en IndexedDB");
+    };
+    resultado.onerror = event => {
+      console.error("Error al insertar en IndexedDB:", event.target.error);
+    };
   };
 
   db.onerror = event => {
-      console.error('Error al abrir la base de datos:', event.target.error);
+    console.error('Error al abrir la base de datos:', event.target.error);
   };
 }
 
