@@ -82,14 +82,38 @@ self.addEventListener('sync', event=>{
     console.log('sync:', event.tag)
 })
 
-self.addEventListener('fetch', event=>{
-    if(event.request.url.includes('https://symphony-server.onrender.com/api/users/create-user')){
-        fetch(event.request)
-        .catch(error=>{
-            self.registration.sync.register('insertar');
-        })
+self.addEventListener('fetch', event => {
+    if (event.request.url.includes('https://symphony-server.onrender.com/api/users/create-user') && event.request.method === 'POST') {
+        // Intentar realizar la solicitud
+        event.respondWith(
+            fetch(event.request)
+                .then(response => {
+                    // Si el servidor responde correctamente, devolver la respuesta original
+                    if (response.ok) {
+                        return response;
+                    }
+                    // Si falla, registrar para sincronización
+                    throw new Error('Error en la solicitud');
+                })
+                .catch(error => {
+                    console.error('Fetch fallido. Registrando para sincronización:', error);
+
+                    // Registrar la sincronización solo si falla la solicitud
+                    if ('sync' in self.registration) {
+                        self.registration.sync.register('sync-usuarios').catch(err => {
+                            console.error('Error al registrar sync:', err);
+                        });
+                    }
+
+                    // Devuelve una respuesta personalizada (opcional)
+                    return new Response(
+                        JSON.stringify({ error: 'Solicitud fallida, registrada para sincronización' }),
+                        { status: 503, headers: { 'Content-Type': 'application/json' } }
+                    );
+                })
+        );
     }
-})
+});
 
 self.addEventListener('sync', event => {
     if (event.tag === 'sync-usuarios') {
