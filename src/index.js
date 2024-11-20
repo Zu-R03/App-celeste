@@ -131,13 +131,14 @@ export function login(event) {
     // Mostrar una alerta de éxito con SweetAlert2
     Swal.fire({
       title: 'Login exitoso!',
-      text: 'Bienvenido ' + data.user.name, // Puedes mostrar el nombre del usuario si lo tienes
+      text: 'Hola ' + data.user.name, // Puedes mostrar el nombre del usuario si lo tienes
       icon: 'success',
       confirmButtonText: 'Aceptar',
+    }).then(() => {
+      // Redirigir a la página principal después de que el usuario presione "Aceptar"
+      window.location.href = '/'; // Redirige a la página principal
     });
 
-    // Redirigir a la página principal o la página deseada
-    window.location.href = '/'; // O usa React Router si es una aplicación React
   })
   .catch(error => {
     console.error('Error en la solicitud de inicio de sesión:', error);
@@ -147,7 +148,6 @@ export function login(event) {
       title: 'Error en el inicio de sesión',
       text: 'Por favor, revisa tus credenciales.',
       icon: 'error',
-      confirmButtonText: 'Aceptar',
     });
   });
 }
