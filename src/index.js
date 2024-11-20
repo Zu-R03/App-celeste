@@ -189,7 +189,7 @@ export function insertar(event) {
         text: 'Tu cuenta ha sido creada exitosamente. ¡Bienvenido!',
         icon: 'success',
         confirmButtonText: 'Aceptar',
-      })
+      });
   })
   .catch(error => {
       console.log('Error en la solicitud, guardando en la BD del navegador:', error);
