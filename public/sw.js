@@ -83,7 +83,7 @@ self.addEventListener('push', event => {
 });
 
 self.addEventListener('fetch', event => {
-    if (event.request.url.includes('https://symphony-server.onrender.com/api/users/create-user')) {
+    if (event.request.url.includes('http://localhost:3001/api/users/create-user')) {
         event.respondWith(
             fetch(event.request).catch(() => {
                 if ('SyncManager' in self) {
@@ -126,7 +126,7 @@ function procesarRegistros(result) {
           let currentValue = cursor.value;
 
           // Enviar los datos a la API
-          fetch('https://symphony-server.onrender.com/api/users/create-user', {
+          fetch('https://app-celeste-server.onrender.com/api/users/create-user', {
               method: 'POST',
               headers: {
                   'Content-Type': 'application/json'
