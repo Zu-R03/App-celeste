@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { IoSearch, IoMenu, IoClose } from "react-icons/io5";
+import { IoGameController, IoMenu, IoClose, IoLogIn, IoLogOut, IoPersonAdd } from "react-icons/io5";
 import { Link as ScrollLink } from "react-scroll";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -7,87 +7,112 @@ import { useAuth } from "../context/AuthContext";
 export default function Index() {
     const [isOpen, setIsOpen] = useState(false);
     const { user, logout } = useAuth();
+    const Game = "/images/Game.jpg";
+    const LoL = "/images/LoL.jpg";
+    const Gears = "/images/Gears.jpg";
+    const Wukong = "/images/Wukong.jpg";
+
     return (
         <>
-            <nav className="sticky top-0 w-full bg-white shadow-sm z-50">
-                <div className="container mx-auto flex items-center justify-between p-4 lg:p-0">
+            {/* Navbar */}
+            <nav className="sticky top-0 w-full bg-gray-900 text-white shadow-lg z-50">
+                <div className="container mx-auto flex items-center justify-between px-4 py-3">
                     {/* Logo */}
-                    <div className="flex items-center">
-                        <img className="w-[50px] h-[50px] sm:w-[75px] sm:h-[75px]" src="/Symphony.png"
-                             alt="Symphony Logo"/>
+                    <div className="flex items-center space-x-2">
+                        <IoGameController className="w-8 h-8 text-yellow-400" />
+                        <span className="text-2xl font-bold text-yellow-400">GameZone</span>
                     </div>
 
                     {/* Menu icon for mobile */}
                     <div className="lg:hidden">
-                        <button onClick={() => setIsOpen(!isOpen)}>
-                            {isOpen ? <IoClose className="w-8 h-8"/> : <IoMenu className="w-8 h-8"/>}
+                        <button onClick={() => setIsOpen(!isOpen)} aria-label="Toggle menu">
+                            {isOpen ? <IoClose className="w-8 h-8" /> : <IoMenu className="w-8 h-8" />}
                         </button>
                     </div>
 
-                    {/* Links and search bar for larger screens */}
-                    <div className="hidden lg:flex items-center space-x-5">
-                        <ScrollLink to="home" spy={true} smooth={true} offset={-70} duration={500}
-                                    className="font-medium text-lg sm:text-xl hover:text-secondary transition duration-300 ease-in-out">
-                            Inicio
-                        </ScrollLink>
-                        <ScrollLink to="about-us" spy={true} smooth={true} offset={-70} duration={500}
-                                    className="font-medium text-lg sm:text-xl hover:text-secondary transition duration-300 ease-in-out">
-                            Nosotros
-                        </ScrollLink>
-                        <div className="relative flex items-center text-gray-500">
-                            <IoSearch className="absolute ml-3 w-5 h-5"/>
-                            <input
-                                type="text"
-                                name="search"
-                                placeholder="Buscar..."
-                                className="w-full sm:w-40 lg:w-56 py-2 pl-10 pr-3 font-semibold text-black placeholder-gray-500 rounded-lg border-none ring-2 ring-gray-300"
-                            />
-                        </div>
-                        {!user ? (
-                            <>
-                                <Link
-                                    to="/login"
-                                    className="text-dark_complementary font-semibold bg-white border-2 border-secondary py-2 px-3 rounded-lg hover:bg-complementary hover:border-complementary hover:text-white transition duration-500 ease-in-out"
-                                >
-                                    Iniciar sesión
-                                </Link>
-                                <Link
-                                    to="/sign-up"
-                                    className="text-white font-semibold bg-secondary border-2 border-secondary py-2 px-3 rounded-lg hover:bg-white hover:border-complementary hover:text-dark_complementary transition duration-500 ease-in-out"
-                                >
-                                    Crear cuenta
-                                </Link>
-                            </>
-                        ) : (
-                            <>
-                                <p className="font-medium text-lg sm:text-xl">¡Hola {user.name}!</p>
-                                <button
-                                    onClick={logout}
-                                    className="text-white font-semibold bg-secondary border-2 border-secondary py-2 px-3 rounded-lg hover:bg-white hover:border-complementary hover:text-dark_complementary transition duration-500 ease-in-out"
-                                >
-                                    Cerrar sesión
-                                </button>
-                            </>
-                        )}
-                    </div>
-                </div>
-
-                {/* Mobile menu */}
-                {isOpen && (
-                    <div
-                        className="absolute top-0 left-0 w-full h-screen bg-white z-40 flex flex-col items-center p-8 space-y-6 text-center shadow-lg lg:hidden">
-                        {/* Close button */}
-                        <button onClick={() => setIsOpen(false)} className="absolute top-4 right-4 text-gray-700">
-                            <IoClose className="w-8 h-8"/>
-                        </button>
-
+                    {/* Links for larger screens */}
+                    <div className="hidden lg:flex items-center space-x-8">
                         <ScrollLink
                             to="home"
                             spy={true}
                             smooth={true}
                             offset={-70}
                             duration={500}
-                            className="w-full py-4 text-lg font-medium text-gray-700 hover:bg-gray-100 rounded-lg"
+                            className="text-lg font-medium hover:text-yellow-400 transition duration-300"
+                        >
+                            Inicio
+                        </ScrollLink>
+                        <ScrollLink
+                            to="about-us"
+                            spy={true}
+                            smooth={true}
+                            offset={-70}
+                            duration={500}
+                            className="text-lg font-medium hover:text-yellow-400 transition duration-300"
+                        >
+                            Nosotros
+                        </ScrollLink>
+                        <ScrollLink
+                            to="featured-games"
+                            spy={true}
+                            smooth={true}
+                            offset={-70}
+                            duration={500}
+                            className="text-lg font-medium hover:text-yellow-400 transition duration-300"
+                        >
+                            Juegos destacados
+                        </ScrollLink>
+
+                        {/* User options */}
+                        {user ? (
+                            <div className="relative group">
+                                <button
+                                    className="flex items-center space-x-2 text-lg font-medium hover:text-yellow-400 transition duration-300"
+                                >
+                                    <IoLogIn className="w-6 h-6" />
+                                    <span>Mi cuenta</span>
+                                </button>
+                                <div className="absolute right-0 mt-2 bg-white text-gray-900 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transition duration-300 transform scale-95 origin-top">
+                                    <button
+                                        onClick={logout}
+                                        className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                                    >
+                                        <IoLogOut className="inline w-5 h-5 mr-2" />
+                                        Cerrar sesión
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="flex space-x-4">
+                                <Link
+                                    to="/login"
+                                    className="flex items-center space-x-2 text-white bg-yellow-400 px-4 py-2 rounded-lg hover:bg-yellow-500 transition duration-300"
+                                >
+                                    <IoLogIn className="w-5 h-5" />
+                                    <span>Iniciar sesión</span>
+                                </Link>
+                                <Link
+                                    to="/sign-up"
+                                    className="flex items-center space-x-2 text-gray-900 bg-white px-4 py-2 rounded-lg hover:bg-yellow-400 hover:text-white transition duration-300"
+                                >
+                                    <IoPersonAdd className="w-5 h-5" />
+                                    <span>Crear cuenta</span>
+                                </Link>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Mobile menu */}
+                {isOpen && (
+                    <div className="lg:hidden bg-gray-800 text-white px-4 py-6 space-y-4">
+                        <ScrollLink
+                            to="home"
+                            spy={true}
+                            smooth={true}
+                            offset={-70}
+                            duration={500}
+                            className="block text-lg font-medium hover:text-yellow-400 transition duration-300"
                             onClick={() => setIsOpen(false)}
                         >
                             Inicio
@@ -98,91 +123,119 @@ export default function Index() {
                             smooth={true}
                             offset={-70}
                             duration={500}
-                            className="w-full py-4 text-lg font-medium text-gray-700 hover:bg-gray-100 rounded-lg"
+                            className="block text-lg font-medium hover:text-yellow-400 transition duration-300"
                             onClick={() => setIsOpen(false)}
                         >
                             Nosotros
                         </ScrollLink>
-                        <div className="w-full flex items-center justify-center relative text-gray-500">
-                            <IoSearch className="absolute left-3 w-5 h-5"/>
-                            <input
-                                type="text"
-                                name="search"
-                                placeholder="Buscar..."
-                                className="w-full py-2 pl-10 pr-3 font-semibold text-black placeholder-gray-500 rounded-lg border-none ring-2 ring-gray-300"
-                            />
-                        </div>
-                        {!user ? (
-                            <>
+                        <ScrollLink
+                            to="featured-games"
+                            spy={true}
+                            smooth={true}
+                            offset={-70}
+                            duration={500}
+                            className="block text-lg font-medium hover:text-yellow-400 transition duration-300"
+                            onClick={() => setIsOpen(false)}
+                        >
+                            Juegos destacados
+                        </ScrollLink>
+                        {user ? (
+                            <button
+                                onClick={() => {
+                                    logout();
+                                    setIsOpen(false);
+                                }}
+                                className="block text-lg font-medium hover:text-yellow-400 transition duration-300"
+                            >
+                                <IoLogOut className="w-6 h-6 inline mr-2" />
+                                Cerrar sesión
+                            </button>
+                        ) : (
+                            <div className="space-y-4">
                                 <Link
                                     to="/login"
-                                    className="w-full py-3 text-dark_complementary font-semibold bg-white border-2 border-secondary rounded-lg hover:bg-complementary hover:border-complementary hover:text-white transition duration-500 ease-in-out"
+                                    className="block text-center text-white bg-yellow-400 px-4 py-2 rounded-lg hover:bg-yellow-500 transition duration-300"
                                     onClick={() => setIsOpen(false)}
                                 >
                                     Iniciar sesión
                                 </Link>
                                 <Link
                                     to="/sign-up"
-                                    className="w-full py-3 text-white font-semibold bg-secondary border-2 border-secondary rounded-lg hover:bg-white hover:border-complementary hover:text-dark_complementary transition duration-500 ease-in-out"
+                                    className="block text-center text-gray-900 bg-white px-4 py-2 rounded-lg hover:bg-yellow-400 hover:text-white transition duration-300"
                                     onClick={() => setIsOpen(false)}
                                 >
                                     Crear cuenta
                                 </Link>
-                            </>
-                        ) : (
-                            <>
-                                <p className="font-medium text-lg sm:text-xl">¡Hola {user.name}!</p>
-                                <button
-                                    onClick={() => {
-                                        logout();
-                                        setIsOpen(false);
-                                    }}
-                                    className="w-full py-3 text-white font-semibold bg-secondary border-2 border-secondary rounded-lg hover:bg-white hover:border-complementary hover:text-dark_complementary transition duration-500 ease-in-out"
-                                >
-                                    Cerrar sesión
-                                </button>
-                            </>
+                            </div>
                         )}
                     </div>
                 )}
             </nav>
 
-            <body>
-            <section id="home" className="px-5">
-                <div className="flex flex-col lg:flex-row items-center justify-around mt-20 lg:mt-40 mb-16 lg:mb-32">
-                    <div className="text-center lg:text-left w-full lg:w-1/2 items-center">
-                        <h1 className="text-4xl lg:text-6xl font-bold">
-                            Descubre una experiencia única al escuchar música
-                        </h1>
-                        <p className="mt-6 lg:mt-10 text-xl lg:text-3xl">
-                            Symphony está a punto de hacer su debut y cambiará la forma en que disfrutas tus canciones.
-                        </p>
+            {/* Main Content */}
+            <main className="bg-white">
+                {/* Hero Section */}
+                <section id="home" className="h-screen flex flex-col justify-center items-center bg-gray-50 text-center">
+                    <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6">
+                        Bienvenido a GameZone
+                    </h1>
+                    <p className="text-lg lg:text-xl text-gray-700 mb-10">
+                        Explora una experiencia única en videojuegos. ¡Juega y diviértete con nuestra comunidad!
+                    </p>
+                    <div className="flex justify-center items-center">
+                        <img
+                            src={Game}
+                            className="h-64 w-80 sm:h-[300px] sm:w-[400px] lg:h-[400px] lg:w-[600px] rounded-lg shadow-lg"
+                            alt="Gaming setup"
+                        />
                     </div>
-                    <img src="https://static1.pocketlintimages.com/wordpress/wp-content/uploads/2023/04/apple-music.jpg"
-                         className="h-64 w-80 sm:h-[300px] sm:w-[400px] lg:h-[400px] lg:w-[600px] rounded-3xl mt-5 lg:mt-0" alt={""}/>
-                </div>
-            </section>
+                </section>
 
-            <section id="about-us" className="px-5">
-                <div
-                    className="flex flex-col lg:flex-row items-center lg:h-1/2 justify-around mt-16 lg:mt-32 mb-16 lg:mb-32">
-                    <img src="https://ijunkie.com/wp-content/uploads/2023/03/Apple-Music-iOS-16.4-1280x960.jpeg"
-                         className="h-64 w-80 sm:h-[300px] sm:w-[400px] lg:h-[470px] lg:w-[600px] rounded-3xl mb-5 lg:mb-0" alt={""}/>
-                    <div className="text-center lg:text-left w-full lg:w-1/2 items-center">
-                        <h1 className="text-4xl lg:text-6xl font-bold text-center lg:text-left">Nosotros</h1>
-                        <p className="mt-6 lg:mt-10 text-lg lg:text-2xl text-justify">
-                            Symphony surge a raíz de variadas necesidades de nuestra audiencia y las limitaciones en
-                            otras plataformas musicales.
-                            Nos hemos dedicado a entender las expectativas del público y a abordar las deficiencias en
-                            la experiencia musical actual.
-                            Estamos emocionados de presentar una solución que redefine la forma en que experimentas la
-                            música, diseñada específicamente para satisfacer tus preferencias y elevar tu disfrute
-                            auditivo a un nuevo nivel.
+                {/* About Us */}
+                <section id="about-us" className="px-5 py-16 bg-gray-100 text-gray-900">
+                    <div className="text-center">
+                        <h1 className="text-4xl lg:text-5xl font-bold">Sobre Nosotros</h1>
+                        <p className="mt-6 text-lg lg:text-xl max-w-4xl mx-auto text-gray-700">
+                            En GameZone, vivimos y respiramos videojuegos. Nuestro objetivo es conectar a los jugadores
+                            de todo el mundo y proporcionarles las mejores experiencias de juego.
                         </p>
                     </div>
-                </div>
-            </section>
-            </body>
+                </section>
+
+                {/* Featured Games */}
+                <section id="featured-games" className="px-5 py-16 bg-gray-50">
+                    <h2 className="text-3xl lg:text-4xl font-bold text-center text-gray-900 mb-8">Juegos destacados</h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div className="bg-white p-5 rounded-lg shadow-lg text-center">
+                            <img
+                                src={Gears}
+                                alt="Gears of War"
+                                className="h-60 w-full object-cover rounded-lg mb-4"
+                            />
+                            <h3 className="text-2xl font-semibold text-gray-900">Gears of War</h3>
+                            <p className="text-gray-700 mt-2">Un emocionante juego de acción y aventuras.</p>
+                        </div>
+                        <div className="bg-white p-5 rounded-lg shadow-lg text-center">
+                            <img
+                                src={LoL}
+                                alt="League of Legends"
+                                className="h-60 w-full object-cover rounded-lg mb-4"
+                            />
+                            <h3 className="text-2xl font-semibold text-gray-900">League of Legends</h3>
+                            <p className="text-gray-700 mt-2">El mejor juego de estrategia para desafiar tu mente.</p>
+                        </div>
+                        <div className="bg-white p-5 rounded-lg shadow-lg text-center">
+                            <img
+                                src={Wukong}
+                                alt="Black Myth Wukong"
+                                className="h-60 w-full object-cover rounded-lg mb-4"
+                            />
+                            <h3 className="text-2xl font-semibold text-gray-900">Black Myth: Wukong</h3>
+                            <p className="text-gray-700 mt-2">Un juego de acción lleno de mitología y aventura.</p>
+                        </div>
+                    </div>
+                </section>
+            </main>
         </>
-    )
+    );
 }
