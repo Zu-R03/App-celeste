@@ -20,7 +20,7 @@ export default function Index() {
                     {/* Logo */}
                     <div className="flex items-center space-x-2">
                         <IoGameController className="w-8 h-8 text-yellow-400" />
-                        <span className="text-2xl font-bold text-yellow-400">GameZone</span>
+                        <span className="text-2xl font-bold text-yellow-400">VideoGame</span>
                     </div>
 
                     {/* Menu icon for mobile */}
@@ -177,7 +177,7 @@ export default function Index() {
                 {/* Hero Section */}
                 <section id="home" className="h-screen flex flex-col justify-center items-center bg-gray-50 text-center">
                     <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6">
-                        Bienvenido a GameZone
+                        Bienvenido a VideoGame
                     </h1>
                     <p className="text-lg lg:text-xl text-gray-700 mb-10">
                         Explora una experiencia única en videojuegos. ¡Juega y diviértete con nuestra comunidad!
@@ -196,7 +196,7 @@ export default function Index() {
                     <div className="text-center">
                         <h1 className="text-4xl lg:text-5xl font-bold">Sobre Nosotros</h1>
                         <p className="mt-6 text-lg lg:text-xl max-w-4xl mx-auto text-gray-700">
-                            En GameZone, vivimos y respiramos videojuegos. Nuestro objetivo es conectar a los jugadores
+                            En VideoGame, vivimos y respiramos videojuegos. Nuestro objetivo es conectar a los jugadores
                             de todo el mundo y proporcionarles las mejores experiencias de juego.
                         </p>
                     </div>

@@ -9,8 +9,8 @@ self.addEventListener('install', event => {
                 '/images/Gears.jpg',
                 '/images/LoL-jpg',
                 '/images/Wukong.jpg',              
-                '/images/IMG_9485.jpeg',    
-                '/images/IMG_9495.jpeg'
+                '/images/mandarina.png',    
+                '/images/mishito.jpg'
             ]);
         })
     );
