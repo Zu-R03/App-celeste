@@ -4,7 +4,11 @@ self.addEventListener('install', event => {
         caches.open('appShell').then(cache => {
             return cache.addAll([
                 '/',                        
-                '/index.html',              
+                '/index.html',
+                '/images/Game.jpg',
+                '/images/Gears.jpg',
+                '/images/LoL-jpg',
+                '/images/Wukong.jpg',              
                 '/images/IMG_9485.jpeg',    
                 '/images/IMG_9495.jpeg'
             ]);
@@ -36,7 +40,7 @@ self.addEventListener('fetch', event => {
                         if (cachedResponse) {
                             return cachedResponse;
                         } else {
-                            return caches.match('/images/IMG_9485.jpeg');
+                            return caches.match('/images/mandarina.png');
                         }
                     });
                 } else {
@@ -50,7 +54,7 @@ self.addEventListener('fetch', event => {
                     if (cachedResponse) {
                         return cachedResponse;
                     } else {
-                        return caches.match('/images/IMG_9485.jpeg');
+                        return caches.match('/images/mandarina.png');
                     }
                 });
             });

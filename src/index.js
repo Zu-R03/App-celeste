@@ -15,7 +15,7 @@ root.render(
   </React.StrictMode>
 );
 
-const VAPID_PUBLIC_KEY = 'BNyHwQF_6yj6Iko4XWppzl4PFDc6fvb-cNm243Der9dhJct5Wv3JDezNYUOsCwdljvf6i4jehq_Yiou84QYGtLk';
+const VAPID_PUBLIC_KEY = 'BAAMnw4LC2YfbQtuCq93Alw4c3LeYVMzNeJvmI6VkE82tDXXAUrQnc9Z0DluwIcMqsEbAp0Hq7U1grgpzGOeDMg';
 
 // Verificar si el usuario está logueado
 const user = JSON.parse(sessionStorage.getItem('user'));

@@ -1,85 +1,100 @@
 import React from "react";
-import {Link, useNavigate} from "react-router-dom";
+import { Link } from "react-router-dom";
 import { login } from "..";
 import { useAuth } from "../context/AuthContext";
+
 export default function Login() {
-
-    const navigate = useNavigate();
-
-    /*const handleRedirect = () => {
-        navigate('/home');
-    };*/
-
-    const { user, logout } = useAuth();
+    const { user } = useAuth();
 
     return (
-        <>
-            <div className="flex min-h-screen flex-1 flex-col items-center justify-center px-6 py-12 lg:px-8 bg-primary">
-                <div className="bg-white p-10 sm:mx-auto sm:w-full sm:max-w-sm rounded-xl">
-                    <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-                        <h2 className=" text-center text-2xl font-semibold text-gray-900">
-                            {user?.name} Inicia sesión
-                        </h2>
-                    </div>
-                    <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                        <form className="space-y-6" onSubmit={(event) => login(event)}>
-                            <div>
-                                <label htmlFor="email" className="block font-medium leading-6 text-gray-900">
-                                    Correo electrónico
-                                </label>
-                                <div className="mt-2">
-                                    <input
-                                        required={true}
-                                        id="email"
-                                        name="email"
-                                        type="email"
-                                        autoComplete="email"
-                                        className="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                    />
-                                </div>
-                            </div>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 px-6 py-12">
+            {/* Contenedor del formulario */}
+            <div className="w-full max-w-lg bg-white shadow-2xl rounded-3xl p-10">
+                {/* Título */}
+                <div className="text-center mb-6">
+                    <h2 className="text-4xl font-extrabold text-gray-900">
+                        Inicia sesión
+                    </h2>
+                    <p className="mt-2 text-sm text-gray-600">
+                        Accede a tu cuenta para continuar
+                    </p>
+                </div>
 
-                            <div>
-                                <div className="flex items-center justify-between">
-                                    <label htmlFor="password"
-                                           className="block font-medium leading-6 text-gray-900">
-                                        Contraseña
-                                    </label>
-                                </div>
-                                <div className="mt-2">
-                                    <input
-                                        required={true}
-                                        id="password"
-                                        name="password"
-                                        type="password"
-                                        autoComplete="current-password"
-                                        className="block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                    />
-                                </div>
-                            </div>
-
-                            <div>
-                                <button
-                                    //onClick={handleRedirect}
-                                    type="submit"
-                                    className="flex w-full mt-10 justify-center rounded-md bg-secondary border-2 border-secondary px-3 py-2 text-md font-semibold leading-6 text-white shadow-sm hover:bg-white hover:text-dark_complementary hover:border-2 hover:border-secondary transition duration-500 ease-in-out"
-                                >
-                                    Iniciar sesión
-                                </button>
-                            </div>
-                        </form>
-
-                        <div className="text-center">
-                            <p className="mt-10 font-semibold text-md text-gray-500">
-                                ¿Aún no tienes una cuenta?
-                            </p>
-                            <Link to="/sign-up" className="font-semibold leading-6 text-secondary hover:text-complementary">
-                                Crea tu cuenta aquí
-                            </Link>
+                {/* Formulario */}
+                <form className="space-y-6" onSubmit={(event) => login(event)}>
+                    {/* Campo de correo electrónico */}
+                    <div>
+                        <label
+                            htmlFor="email"
+                            className="block text-sm font-medium text-gray-700"
+                        >
+                            Correo electrónico
+                        </label>
+                        <div className="mt-1">
+                            <input
+                                required
+                                id="email"
+                                name="email"
+                                type="email"
+                                autoComplete="email"
+                                className="block w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm px-4 py-2 bg-gray-50 placeholder:text-gray-500 placeholder:italic"
+                                placeholder="Ingresa tu correo electrónico"
+                            />
                         </div>
                     </div>
+
+                    {/* Campo de contraseña */}
+                    <div>
+                        <label
+                            htmlFor="password"
+                            className="block text-sm font-medium text-gray-700"
+                        >
+                            Contraseña
+                        </label>
+                        <div className="mt-1">
+                            <input
+                                required
+                                id="password"
+                                name="password"
+                                type="password"
+                                autoComplete="current-password"
+                                className="block w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm px-4 py-2 bg-gray-50 placeholder:text-gray-500 placeholder:italic"
+                                placeholder="Ingresa tu contraseña"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Botón de inicio de sesión */}
+                    <div>
+                        <button
+                            type="submit"
+                            className="w-full flex justify-center rounded-lg bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 py-3 px-4 text-white font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition duration-300"
+                        >
+                            Iniciar sesión
+                        </button>
+                    </div>
+                </form>
+
+                {/* Separador */}
+                <div className="mt-8 flex items-center">
+                    <div className="flex-grow h-px bg-gray-300"></div>
+                    <span className="px-3 text-sm text-gray-500">o</span>
+                    <div className="flex-grow h-px bg-gray-300"></div>
+                </div>
+
+                {/* Enlace de registro */}
+                <div className="mt-6 text-center">
+                    <p className="text-sm text-gray-600">
+                        ¿No tienes una cuenta?{" "}
+                        <Link
+                            to="/sign-up"
+                            className="font-medium text-indigo-600 hover:text-indigo-500"
+                        >
+                            Regístrate aquí
+                        </Link>
+                    </p>
                 </div>
             </div>
-        </>
-    )
+        </div>
+    );
 }
