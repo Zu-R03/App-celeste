@@ -167,7 +167,7 @@ export function insertar(event) {
     password: password,
   };
 
-  fetch('http://localhost:3000/api/users/create-user', {
+  fetch('https://app-celeste-server.onrender.com/api/users/create-user', {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json'
