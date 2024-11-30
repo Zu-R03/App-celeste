@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from "react"; 
 import { IoGameController, IoMenu, IoClose, IoLogIn, IoLogOut, IoPersonAdd } from "react-icons/io5";
 import { Link as ScrollLink } from "react-scroll";
 import { Link } from "react-router-dom";
@@ -11,8 +11,7 @@ export default function Index() {
     const LoL = "/images/LoL.jpg";
     const Gears = "/images/Gears.jpg";
     const Wukong = "/images/Wukong.jpg";
-
-    return (
+    return ( 
         <>
             {/* Navbar */}
             <nav className="sticky top-0 w-full bg-gray-900 text-white shadow-lg z-50">

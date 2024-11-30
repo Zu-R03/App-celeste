@@ -16,27 +16,18 @@ root.render(
 ); 
  
 const VAPID_PUBLIC_KEY = 'BAAMnw4LC2YfbQtuCq93Alw4c3LeYVMzNeJvmI6VkE82tDXXAUrQnc9Z0DluwIcMqsEbAp0Hq7U1grgpzGOeDMg'; 
- 
-// Verificar si el usuario está logueado 
 const user = JSON.parse(sessionStorage.getItem('user')); 
  
-// Solo registrar el Service Worker si el usuario está logueado 
 if (user && 'serviceWorker' in navigator && 'PushManager' in window) { 
- 
   const user = JSON.parse(sessionStorage.getItem('user')); 
- 
   navigator.serviceWorker.register('/sw.js') 
     .then(registration => { 
       console.log('Service Worker registrado con éxito:', registration); 
- 
-      // Pedimos permiso para notificaciones 
       Notification.requestPermission().then(permission => { 
         console.log(`Permiso de notificación: ${permission}`); 
-         
         if (permission === 'granted') { 
           navigator.serviceWorker.ready.then(async swRegistration => { 
             console.log('Service Worker está listo.'); 
- 
             try { 
               const subscription = await swRegistration.pushManager.subscribe({ 
                 userVisibleOnly: true, 
@@ -44,13 +35,12 @@ if (user && 'serviceWorker' in navigator && 'PushManager' in window) {
               }); 
               console.log('Suscripción creada:', subscription); 
  
-              // Enviar la suscripción al servidor 
               const response = await fetch('https://app-celeste-server.onrender.com/api/suscripciones/subscribe', { 
                 method: 'POST', 
                 headers: { 'Content-Type': 'application/json' },  
                 body: JSON.stringify({ 
                   userId: user.id, 
-                  subscription: subscription // Enviar el objeto completo 
+                  subscription: subscription 
                 }) 
               }); 
  
@@ -98,10 +88,8 @@ db.onupgradeneeded=event=>{
  
 export function login(event) { 
   event.preventDefault(); 
- 
   const email = document.getElementById('email').value; 
   const password = document.getElementById('password').value; 
- 
   const data = { 
     email: email, 
     password: password, 
@@ -121,29 +109,27 @@ export function login(event) {
     return response.json(); 
   }) 
   .then(data => { 
-    // Si la autenticación es exitosa, puedes guardar el token en sessionStorage 
     console.log('Autenticación exitosa:', data); 
  
-    // Guardar el token o algún dato relevante en sessionStorage 
-    sessionStorage.setItem('authToken', data.token); // Suponiendo que la respuesta incluye un token 
-    sessionStorage.setItem('user', JSON.stringify(data.user)); // Guardar información del usuario 
+    sessionStorage.setItem('authToken', data.token); 
+    sessionStorage.setItem('user', JSON.stringify(data.user)); 
  
-    // Mostrar una alerta de éxito con SweetAlert2 
+    
     Swal.fire({ 
       title: 'Login exitoso!', 
-      text: 'Hola ' + data.user.name, // Puedes mostrar el nombre del usuario si lo tienes 
+      text: 'Hola ' + data.user.name, 
       icon: 'success', 
       confirmButtonText: 'Aceptar', 
     }).then(() => { 
-      // Redirigir a la página principal después de que el usuario presione "Aceptar" 
-      window.location.href = '/'; // Redirige a la página principal 
+     
+      window.location.href = '/'; 
     }); 
  
   }) 
   .catch(error => { 
     console.error('Error en la solicitud de inicio de sesión:', error); 
  
-    // Mostrar una alerta de error con SweetAlert2 
+    
     Swal.fire({ 
       title: 'Error en el inicio de sesión', 
       text: 'Por favor, revisa tus credenciales.', 
@@ -183,7 +169,7 @@ export function insertar(event) {
   .then(data => { 
       console.log('Cuenta creada exitosamente:', data); 
  
-      // Mostrar alerta de éxito con SweetAlert2 
+    
       Swal.fire({ 
         title: 'Cuenta creada!', 
         text: 'Tu cuenta ha sido creada exitosamente. ¡Bienvenido!', 
@@ -195,7 +181,7 @@ export function insertar(event) {
     console.log('Error en la solicitud:', error); 
  
     if (!navigator.onLine) { 
-        // Guardar datos solo si el error es de conexión 
+      
         Swal.fire({ 
             title: 'Sin conexión', 
             text: 'No tienes conexión a internet. Guardaremos tus datos para intentarlo más tarde.', 
@@ -233,17 +219,13 @@ export function insertar(event) {
  
 function guardarEnIndexedDB(name, lastname, email, password) { 
   let db = window.indexedDB.open('database'); 
- 
   db.onsuccess = event => { 
       let result = event.target.result; 
       let transaccion = result.transaction('usuarios', 'readwrite'); 
       let obj = transaccion.objectStore('usuarios'); 
- 
-      // Verificar si el email ya existe 
       let request = obj.get(email); 
       request.onsuccess = event => { 
           if (!event.target.result) { 
-              // Si no existe, insertar 
               let resultado = obj.add({ name, lastname, email, password }); 
               resultado.onsuccess = () => { 
                   console.log("Inserción realizada en IndexedDB"); 

@@ -24,8 +24,6 @@ self.addEventListener('fetch', event => {
     if (event.request.method === 'POST') { 
         return;  
     } 
-  
-   
     if (event.request.url.startsWith('http')) { 
         if (event.request.method === 'GET') { 
             const resp = fetch(event.request).then(respuesta => { 
@@ -55,7 +53,6 @@ self.addEventListener('fetch', event => {
  
             event.respondWith(resp); 
         } else { 
-            // Para solicitudes POST (o cualquier otro tipo que no sea GET), simplemente pasamos la solicitud 
             event.respondWith(fetch(event.request)); 
         } 
     } 
@@ -69,8 +66,6 @@ self.addEventListener('push', event => {
     const options = { 
       body: payload.body || 'Tienes una nueva notificación', 
     }; 
-   
-    // Mostrar la notificación 
     event.waitUntil( 
       self.registration.showNotification(title, options) 
     ); 
@@ -110,17 +105,12 @@ function enviarDatosGuardados() {
 function procesarRegistros(result) { 
   let transaccion = result.transaction('usuarios', 'readonly'); 
   let objStore = transaccion.objectStore('usuarios'); 
- 
   let cursorRequest = objStore.openCursor(); 
- 
   cursorRequest.onsuccess = event => { 
       let cursor = event.target.result; 
- 
       if (cursor) { 
           let currentValue = cursor.value; 
- 
-          // Enviar los datos a la API 
-          fetch('https://app-celeste-server.onrender.com/api/users/create-user', { 
+           fetch('https://app-celeste-server.onrender.com/api/users/create-user', { 
               method: 'POST', 
               headers: { 
                   'Content-Type': 'application/json' 
@@ -130,18 +120,13 @@ function procesarRegistros(result) {
           .then(response => response.json()) 
           .then(data => { 
               console.log('Datos enviados con éxito:', data); 
- 
-              // Abrir una nueva transacción para eliminar el registro 
               let deleteTransaction = result.transaction('usuarios', 'readwrite'); 
               let deleteStore = deleteTransaction.objectStore('usuarios'); 
               let deleteRequest = deleteStore.delete(cursor.key);  
- 
               deleteRequest.onsuccess = () => { 
                   console.log('Registro eliminado con éxito'); 
-                  // Volver a abrir el cursor después de eliminar 
-                  procesarRegistros(result);  // Volver a llamar para continuar con los siguientes registros 
+                  procesarRegistros(result);  
               }; 
- 
               deleteRequest.onerror = () => { 
                   console.error('Error al eliminar el registro');  
               }; 
@@ -153,7 +138,6 @@ function procesarRegistros(result) {
           console.log('No hay más registros que enviar'); 
       } 
   }; 
- 
   cursorRequest.onerror = event => { 
       console.error('Error al abrir el cursor:', event.target.error); 
   }; 

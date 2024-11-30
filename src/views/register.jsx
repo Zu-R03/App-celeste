@@ -5,9 +5,7 @@ import { insertar } from "..";
 export default function Register() {
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 px-6 py-12">
-            {/* Contenedor del formulario */}
             <div className="w-full max-w-lg bg-white shadow-2xl rounded-3xl p-10">
-                {/* Título */}
                 <div className="text-center mb-6">
                     <h2 className="text-4xl font-extrabold text-gray-900">
                         Crea tu cuenta
@@ -16,10 +14,7 @@ export default function Register() {
                         Regístrate para empezar
                     </p>
                 </div>
-
-                {/* Formulario */}
                 <form className="space-y-6" onSubmit={(event) => insertar(event)}>
-                    {/* Campo de nombre */}
                     <div>
                         <label
                             htmlFor="name"
